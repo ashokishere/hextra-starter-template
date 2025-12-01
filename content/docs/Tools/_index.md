@@ -1,5 +1,5 @@
 ---
-title: Architecting Resilient and Scalable Microservices with Apache Kafka
+title: Apache Kafka
 type: docs
 prev: docs/first-page
 next: docs/Tools/leaf
@@ -9,7 +9,7 @@ sidebar:
 
 
 
-### 1.0 The Challenge: The Brittleness of Tightly-Coupled Architectures
+## 1.0 The Challenge: The Brittleness of Tightly-Coupled Architectures
 
 Growing applications often begin with a simple, direct communication model between microservices. This initial architectural simplicity, however, frequently conceals significant future risks to scalability and reliability. As systems evolve and user load increases, the tight coupling inherent in synchronous, direct-call architectures reveals itself as a critical point of failure, threatening both performance and business continuity.
 
@@ -21,7 +21,7 @@ To illustrate these challenges, consider a typical e-commerce application, "Stre
 
 These issues demonstrate that an architecture based on direct, synchronous calls is fundamentally brittle. To achieve true resilience and scale, a fundamentally different approach to inter-service communication is required.
 
-### 2.0 The Solution: Embracing Asynchronous Communication with Kafka
+## 2.0 The Solution: Embracing Asynchronous Communication with Kafka
 
 Apache Kafka provides the solution to the challenges of tight coupling by introducing an asynchronous, event-driven communication model. Instead of services talking directly to each other, they communicate through Kafka, which acts as a reliable "middleman" or a central "conveyor belt" for business events. This design choice has profound implications for fault tolerance, as it decouples services from one another, allowing them to operate independently and resiliently.
 
@@ -37,11 +37,11 @@ It is critical to understand that Kafka is not a replacement for a traditional d
 
 By adopting this event-driven paradigm, organizations can build systems that are inherently more resilient and scalable. To appreciate how Kafka delivers on this promise, it is essential to understand its core internal architecture.
 
-### 3.0 Deconstructing the Core Kafka Architecture
+## 3.0 Deconstructing the Core Kafka Architecture
 
 A strategic understanding of Apache Kafka's core architectural components is essential, as these components are the foundation of its resilience, persistence, and high performance. They work in concert to create a robust platform for managing massive streams of event data.
 
-## 3.1 Topics and Brokers: The Persistent Data Backbone
+### 3.1 Topics and Brokers: The Persistent Data Backbone
 
 At the heart of Kafka's design are two fundamental concepts: topics and brokers.
 
@@ -51,7 +51,7 @@ At the heart of Kafka's design are two fundamental concepts: topics and brokers.
 
 Unlike many traditional message brokers where a message disappears once it is consumed—much like a live TV program that is gone if you miss it—Kafka persists events to disk. This means an event is not deleted after being read. It can be re-read multiple times by many different consumers, enabling diverse use cases. For example, a single order event can be read by a real-time fraud detection service, a batch analytics pipeline, and an order fulfillment service, all at different times and for different purposes. This durable, replayable log is a cornerstone of Kafka's power.
 
-## 3.2 The Modern Kafka Cluster: KRaft vs. Zookeeper
+### 3.2 The Modern Kafka Cluster: KRaft vs. Zookeeper
 
 Historically, Kafka clusters depended on an external project, Apache Zookeeper, for critical cluster management tasks like tracking broker status and coordinating leadership. While effective, this dependency added operational complexity, requiring teams to deploy, manage, and monitor a separate distributed system.
 
@@ -59,17 +59,17 @@ Newer versions of Kafka have introduced a significant architectural simplificati
 
 This robust data storage architecture, managed efficiently by brokers, is designed not just for persistence but for massive, parallel scale.
 
-### 4.0 Engineering for Scale: Partitions and Consumer Groups
+## 4.0 Engineering for Scale: Partitions and Consumer Groups
 
 The critical question for any distributed system is how it maintains high performance under massive load. Apache Kafka was built to handle millions of events from millions of users, and it achieves this scalability primarily through two powerful mechanisms: partitions and consumer groups.
 
-## 4.1 Partitions: Enabling Parallel Processing
+### 4.1 Partitions: Enabling Parallel Processing
 
 A partition is a subdivision of a topic. To understand this, consider a video production team. If a single editor handles all videos, they quickly become a bottleneck. As the team grows, it can assign different editors to specialize: one for short-form content, one for long-form, and another for podcasts. This division of labor allows work to proceed in parallel.
 
 Partitions work the same way for Kafka topics. A single topic, like orders, can be split into multiple partitions. For example, the orders topic could be partitioned by geographic region: one partition for EU orders, another for US orders, and a third for Africa orders. This allows different consumers to process each partition's data simultaneously, dramatically increasing the overall processing throughput of the topic.
 
-## 4.2 Consumer Groups: Distributing the Load
+### 4.2 Consumer Groups: Distributing the Load
 
 A consumer group is a logical grouping of multiple instances of the same consumer application that work together to process events from a topic. For example, several running instances of a payment microservice would form a single consumer group.
 
@@ -77,7 +77,7 @@ Kafka intelligently and automatically distributes the partitions of a topic amon
 
 Together, partitions and consumer groups provide a robust and elastic framework for scaling data processing. This architectural theory is best understood when demonstrated through a practical implementation.
 
-### 5.0 A Practical Implementation Blueprint
+## 5.0 A Practical Implementation Blueprint
 
 The architectural concepts of producers, consumers, topics, and partitions come to life in a practical implementation. The following blueprint synthesizes the key steps for creating a simple but realistic event-driven system, demonstrating how producers and consumers interact with a Kafka broker in a real-world context.
 
@@ -99,7 +99,7 @@ Finally, a consumer application is built to process events. A Python script is c
 
 This blueprint serves as a tangible starting point, demonstrating the end-to-end flow of an event from a producer, through a Kafka broker, to a consumer, laying the groundwork for more complex and robust systems.
 
-### 6.0 Conclusion: Why Kafka is the Foundation for Future-Proof Systems
+## 6.0 Conclusion: Why Kafka is the Foundation for Future-Proof Systems
 
 The journey from a tightly-coupled, synchronous architecture to a decoupled, event-driven model represents a strategic evolution in system design. The initial problems of cascading failures and performance bottlenecks are not merely mitigated by Apache Kafka; they are solved at an architectural level. By introducing an asynchronous communication layer, Kafka allows microservices to operate with a degree of autonomy and resilience that is impossible in direct-call systems.
 
