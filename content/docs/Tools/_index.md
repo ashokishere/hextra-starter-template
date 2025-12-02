@@ -2,7 +2,7 @@
 title: Apache Kafka
 type: docs
 prev: docs/first-page
-next: docs/Tools/leaf
+next: docs/Tools/Vim
 sidebar:
   open: true
 ---
