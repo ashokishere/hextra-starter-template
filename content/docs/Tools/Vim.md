@@ -1,12 +1,13 @@
 ---
 title: Vim
 type: docs
-prev: docs/Tools/
+prev: docs/Tools/kafka
 ---
 
-# Vim Cheat Sheet for CKA/CKAD (1-Page Printable)
+# Vim Cheat Sheet for CKA/CKAD 
 
 ## Navigation
+
 - gg – Top of file
 - G – Bottom of file
 - 0 – Start of line
