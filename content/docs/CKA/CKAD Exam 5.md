@@ -12,7 +12,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In the ckad-pod-design namespace, start a ckad-httpd-bwutlljzof pod running the httpd:alpine image.
 
@@ -21,7 +21,7 @@ The pod's container should be exposed at port 8080.
 ## Solution
 Create a YAML file with the content as below:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
@@ -40,11 +40,11 @@ spec:
   restartPolicy: Always
 status: {}
 
-Then use kubectl apply -f file_name.yaml to create the required object.
+Then use ``` kubectl apply -f file_name.yaml to create the required object.
 
 Alternatively, you can use this command for similar outcome:
 
- kubectl run ckad-httpd-bwutlljzof --image=httpd:alpine --port=8080 -n ckad-pod-design
+ ``` kubectl run ckad-httpd-bwutlljzof --image=httpd:alpine --port=8080 -n ckad-pod-design
 
 ## Details
 
@@ -61,7 +61,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 A persistent volume called papaya-pv-ckad09-str is already created with a storage capacity of 150Mi. It's using the papaya-stc-ckad09-str storage class with the path /opt/papaya-stc-ckad09-str.
 
@@ -72,7 +72,7 @@ Resize the PVC to 80Mi and make sure the PVC is in Bound state.
 ## Solution
 Edit papaya-pv-ckad09-str PV:
 
-kubectl get pv papaya-pv-ckad09-str -o yaml > /tmp/papaya-pv-ckad09-str.yaml
+``` kubectl get pv papaya-pv-ckad09-str -o yaml > /tmp/papaya-pv-ckad09-str.yaml
 
 Edit the template:
 
@@ -82,7 +82,7 @@ Delete all entries for uid:, annotations, status:, claimRef: from the template.
 
 Edit papaya-pvc-ckad09-str PVC:
 
-kubectl get pvc papaya-pvc-ckad09-str -o yaml > /tmp/papaya-pvc-ckad09-str.yaml
+``` kubectl get pvc papaya-pvc-ckad09-str -o yaml > /tmp/papaya-pvc-ckad09-str.yaml
 
 Edit the template:
 
@@ -92,16 +92,16 @@ Under resources: -> requests: change storage: 50Mi to storage: 80Mi and save the
 
 Delete the exsiting PVC:
 
-kubectl delete pvc papaya-pvc-ckad09-str
+``` kubectl delete pvc papaya-pvc-ckad09-str
 
 Delete the exsiting PV and create using the template:
 
-kubectl delete pv papaya-pv-ckad09-str
-kubectl apply -f /tmp/papaya-pv-ckad09-str.yaml
+``` kubectl delete pv papaya-pv-ckad09-str
+``` kubectl apply -f /tmp/papaya-pv-ckad09-str.yaml
 
 Create the PVC using template:
 
-kubectl apply -f /tmp/papaya-pvc-ckad09-str.yaml
+``` kubectl apply -f /tmp/papaya-pvc-ckad09-str.yaml
 
 ## Details
 
@@ -114,14 +114,14 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In the ckad-job namespace, create a job called my-simple-job that runs date command inside the container; use busybox image for this task.
 
 ## Solution
 Create a YAML file with the content as below:
 
-apiVersion: batch/v1
+```  apiVersion: batch/v1
 kind: Job
 metadata:
   creationTimestamp: null
@@ -141,11 +141,11 @@ spec:
       restartPolicy: Never
 status: {}
 
-Then use kubectl apply -f file_name.yaml to create the required object.
+Then use ``` kubectl apply -f file_name.yaml to create the required object.
 
 Alternatively, you can use this command for similar outcome:
 
-kubectl create job my-simple-job --image=busybox -n ckad-job -- date
+``` kubectl create job my-simple-job --image=busybox -n ckad-job -- date
 
 ## Details
 
@@ -162,7 +162,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 Create a persistent volume called cloudstack-pv with the below properties:
 
@@ -177,7 +177,7 @@ Next, create a persistent volume claim called cloudstack-pvc as per below proper
 ## Solution
 Use below YAML to create desired Kubernetes objects:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: cloudstack-pv
@@ -192,7 +192,7 @@ spec:
 
 ---
 
-apiVersion: v1
+```  apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: cloudstack-pvc
@@ -222,7 +222,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 In the ckad-job namespace, schedule a job called learning-every-hour that prints this message in the shell every hour at 0 minutes: I will pass CKAD certification.
 
@@ -233,7 +233,7 @@ Use alpine image for the cronjob!
 ## Solution
 Create a YAML file with the content as below:
 
-apiVersion: batch/v1
+```  apiVersion: batch/v1
 kind: CronJob
 metadata:
   namespace: ckad-job
@@ -254,7 +254,7 @@ spec:
             - echo I will pass CKAD certification
           restartPolicy: OnFailure
 
-Then use kubectl apply -f file_name.yaml to create the required object.
+Then use ``` kubectl apply -f file_name.yaml to create the required object.
 
 ## Details
 
@@ -273,7 +273,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 An application called results-apd is running on cluster2. In the weekly meeting, the team decides to upgrade the version of the existing image to 1.23.3 and wants to store the new version of the image in a file /root/records/new-image-records.txt on the cluster2-controlplane instance.
 
@@ -284,22 +284,22 @@ You can SSH into the cluster2 using ssh cluster2-controlplane command.
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
-In this task, we will use the kubectl describe, kubectl get, kubectl set and kubectl scale commands. Here are the steps: -
+In this task, we will use the ``` kubectl describe, ``` kubectl get, ``` kubectl set and ``` kubectl scale commands. Here are the steps: -
 
 To check all the deployments in all the namespaces in the cluster2, we would have to run the following command:
-kubectl get deployments -A
+``` kubectl get deployments -A
 
 Inspect all the deployments.
 
-We can see that one of the deployment's names is results-apd and deployed on dashboard-apd namespace. Use the kubectl describe command to get detailed information of that deployment: -
-kubectl describe -n dashboard-apd deploy results-apd
+We can see that one of the deployment's names is results-apd and deployed on dashboard-apd namespace. Use the ``` kubectl describe command to get detailed information of that deployment: -
+``` kubectl describe -n dashboard-apd deploy results-apd
 
-The output of the kubectl describe command will provide you with a detailed description of the deployment, including its name, namespace, creation time, labels, replicas, and the Docker image being used.
+The output of the ``` kubectl describe command will provide you with a detailed description of the deployment, including its name, namespace, creation time, labels, replicas, and the Docker image being used.
 
-In the previous command, we can see the container and image name under the Pod Template spec. Use the kubectl set command to update the image of that container as follows:
-kubectl set image -n dashboard-apd deploy results-apd results-apd-container=nginx:1.23.3
+In the previous command, we can see the container and image name under the Pod Template spec. Use the ``` kubectl set command to update the image of that container as follows:
+``` kubectl set image -n dashboard-apd deploy results-apd results-apd-container=nginx:1.23.3
 
 After running the above command, Kubernetes will automatically update the results-apd-container container with the new image, and create a new replica of the resource with the updated image.
 The old replica will be deleted once the new one is up and running.
@@ -311,12 +311,12 @@ If the records directory is absent, use the mkdir command to create this directo
 
 NOTE: - To exit from any node, type exit on the terminal or press CTRL + D.
 
-Now, run the kubectl scale command to scale the deployment to 4:
-kubectl scale deployment -n dashboard-apd results-apd --replicas=4
+Now, run the ``` kubectl scale command to scale the deployment to 4:
+``` kubectl scale deployment -n dashboard-apd results-apd --replicas=4
 
-Cross-verify the scaled deployment by using the kubectl get command:
+Cross-verify the scaled deployment by using the ``` kubectl get command:
 
-kubectl get deployments,pods -n dashboard-apd
+``` kubectl get deployments,pods -n dashboard-apd
 
 ## Details
 
@@ -333,7 +333,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 One co-worker deployed an nginx helm chart on the cluster3 server called lvm-crystal-apd. A new update is pushed to the helm chart, and the team wants you to update the helm repository to fetch the new changes.
 
@@ -346,9 +346,9 @@ You can SSH into the cluster3 using ssh cluster3-controlplane command.
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
-In this task, we will use the kubectl and helm commands. Here are the steps: -
+In this task, we will use the ``` kubectl and helm commands. Here are the steps: -
 
 Log in to the cluster3-controlplane node first and use the helm ls command to list all the releases installed using Helm in the Kubernetes cluster.
 
@@ -382,8 +382,8 @@ helm ls -n crystal-apd-ns
 
 Look under the CHART column for the chart version.
 
-Use the kubectl get command to check the replicas of the deployment: -
-kubectl get deploy -n crystal-apd-ns
+Use the ``` kubectl get command to check the replicas of the deployment: -
+``` kubectl get deploy -n crystal-apd-ns
 
 The available count 2 is under the AVAILABLE column.
 
@@ -402,7 +402,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 One application, webpage-server-01, is deployed on the Kubernetes cluster by the Helm tool. Now, the team wants to deploy a new version of the application by replacing the existing one. A new version of the helm chart is given in the /root/new-version directory on the student-node. Validate the chart before installing it on the Kubernetes cluster. 
 
@@ -411,7 +411,7 @@ Use the helm command to validate and install the chart. After successfully insta
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In this task, we will use the helm commands. Here are the steps: -
 
@@ -449,34 +449,34 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 One application deployment called deluxe-apd got deployed on the wrong namespace. The team wants you to take the appropriate steps to deploy it on the newspace namespace.
 
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
-In this task, we will use the kubectl command. Here are the steps: -
+In this task, we will use the ``` kubectl command. Here are the steps: -
 
-Use the kubectl get command to list the deployments on all the namespaces.
+Use the ``` kubectl get command to list the deployments on all the namespaces.
 
-kubectl get deployment -A
+``` kubectl get deployment -A
 
 Here -A option stands for all namespaces, which displays resources from all namespaces.
 
 Inspect the deployment name deluxe-apd from the above command output and identify which namespace it got deployed.
 
-Use the kubectl get command to retrieves the YAML definition of a deployment named deluxe-apd and save it into a file.
+Use the ``` kubectl get command to retrieves the YAML definition of a deployment named deluxe-apd and save it into a file.
 
-kubectl get deployment deluxe-apd -n app-lox12387 -o yaml > <FILE-NAME>.yaml
+``` kubectl get deployment deluxe-apd -n app-lox12387 -o yaml > <FILE-NAME>.yaml
 
 Here -n option stands for namespace, which is used to specify the namespace.
 
 Open the file with any text editor such as vi or nano and make the necessary changes and save it. It should look like this: -
 
-apiVersion: apps/v1
+```  apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -499,15 +499,15 @@ spec:
 
 Before deploying on the given namespace, list the namespaces if it exists or not.
 
-kubectl get ns
+``` kubectl get ns
 
 If it's not exist, then create the namespace first with the following command: -
 
-kubectl create ns newspace
+``` kubectl create ns newspace
 
 Now, deploy the resource with the following command:
 
-kubectl create -f <FILE-NAME>.yaml
+``` kubectl create -f <FILE-NAME>.yaml
 
 The above command will deploy the resource in the given namespace.
 
@@ -522,7 +522,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 In the dev-apd namespace, one of the developers has performed a rolling update and upgraded the application to a newer version. But somehow, application pods are not being created.
 
@@ -535,30 +535,30 @@ You can SSH into the cluster2 using ssh cluster2-controlplane command.
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
-In this task, we will use the kubectl describe, kubectl get, kubectl rollout and kubectl scale commands. Here are the steps: -
+In this task, we will use the ``` kubectl describe, ``` kubectl get, ``` kubectl rollout and ``` kubectl scale commands. Here are the steps: -
 
 First check the status of the pods: -
-kubectl get pods -n dev-apd
+``` kubectl get pods -n dev-apd
 
-One of the pods is in an error state. By using the kubectl describe command. We can see that there is an issue with the image.
+One of the pods is in an error state. By using the ``` kubectl describe command. We can see that there is an issue with the image.
 
-We can check the revision history of a deployment by using the kubectl history command as follows: -
+We can check the revision history of a deployment by using the ``` kubectl history command as follows: -
 
-kubectl rollout history -n dev-apd deploy webapp-apd  
+``` kubectl rollout history -n dev-apd deploy webapp-apd  
 
 Inspect the revision in detail as follows: -
 
-kubectl rollout history -n dev-apd deploy webapp-apd --revision=2
+``` kubectl rollout history -n dev-apd deploy webapp-apd --revision=2
 
-We found that the image issue happened because of the wrong image tag, and the previous image was correct. As a quick fix, we need to roll back to the previous revision. Use the kubectl rollout command: -
+We found that the image issue happened because of the wrong image tag, and the previous image was correct. As a quick fix, we need to roll back to the previous revision. Use the ``` kubectl rollout command: -
 
-kubectl rollout undo -n dev-apd deploy webapp-apd
+``` kubectl rollout undo -n dev-apd deploy webapp-apd
 
 After successful rolling back, inspect the updated image: -
 
-kubectl describe deploy -n dev-apd webapp-apd | grep -i image
+``` kubectl describe deploy -n dev-apd webapp-apd | grep -i image
 
 On the Controlplane node, save the image name to the given path /root/records/rolling-back-record.txt: -
 
@@ -570,11 +570,11 @@ If the records directory is absent, use the mkdir command to create this directo
 
 NOTE: - To exit from any node, type exit on the terminal or press CTRL + D.
 
-And increase the replica count to the 3 with help of kubectl scale command: -
+And increase the replica count to the 3 with help of ``` kubectl scale command: -
 
-kubectl scale deploy -n dev-apd webapp-apd --replicas=3
+``` kubectl scale deploy -n dev-apd webapp-apd --replicas=3
 
-Verify it by running the command: kubectl get deploy -n dev-apd
+Verify it by running the command: ``` kubectl get deploy -n dev-apd
 
 ## Details
 
@@ -591,7 +591,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 For this scenario, create an ingress controller.
 
@@ -604,8 +604,8 @@ Note: All the resources are deployed in ingress-nginx namespace.
 ## Solution
 Use cat command to view the contents of the file. cat /root/nginx-controller.yaml
 
-Please check the apiVersion, resource kind, namespace and the container port sections
-apiVersion: apps/betav1 #wrong api version
+Please check the ```  apiVersion, resource kind, namespace and the container port sections
+```  apiVersion: apps/betav1 #wrong api version
 kind: deployment #change this
 metadata:
   labels:
@@ -734,7 +734,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 We have deployed an application named app-ckad-svcn in the default namespace. Configure a service multi-port-svcn for the application which exposes the pods at multiple ports with different protocols.
 
@@ -745,14 +745,14 @@ Expose port 53 using the UDP with name dns
 The pod app-ckad-svcn is deployed in default namespace.
 
 To view the pod along with labels, use the following command.
-student-node ~ ➜  kubectl get pods app-ckad-svcn --show-labels 
+student-node ~ ➜  ``` kubectl get pods app-ckad-svcn --show-labels 
 NAME            READY   STATUS    RESTARTS   AGE     LABELS
 app-ckad-svcn   1/1     Running   0          2m58s   app=app-ckad,scenario=multiport
 
 We will use those labels to create the service.
 
 Create a service using the following manifest. It will create a service with multiple ports expose with different protocols.
-apiVersion: v1
+```  apiVersion: v1
 kind: Service
 metadata:
   name: multi-port-svcn
@@ -790,7 +790,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 Create a Kubernetes Service named ckad14-svcn that routes traffic to the external domain my.application.test.com. This service should be configured as type ExternalName.
 
@@ -799,7 +799,7 @@ Create the service in the default namespace.
 ## Solution
 Create the service using the following manifest:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Service
 metadata:
   name: ckad14-svcn
@@ -822,7 +822,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 A new payment service has been introduced. Since it is a sensitive application, it is deployed in its own namespace sensitive-space. Inspect the resources and service created.
 
@@ -833,12 +833,12 @@ Identify and implement the best approach to making this application available on
 ## Solution
 Switch to cluster2 using the following:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 ## Solution manifest file to create a new ingress service to make the application available at /pay as follows:
 
 ---
-apiVersion: networking.k8s.io/v1
+```  apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-ckad14-pay
@@ -873,7 +873,7 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 We have already deployed the required pods and services in the namespace ckad01-appstk-sec-aecs.
 
@@ -890,7 +890,7 @@ Secret 3: DB_Password=password123
 Configure ckad01-webapp-pod-aecs to load environment variables from the newly created secret, where the keys from the secret should become the environment variable name in the Pod.
 
 ## Solution
-student-node ~ ➜  kubectl config use-context cluster1
+student-node ~ ➜  ``` kubectl config use-context cluster1
 Switched to context "cluster1".
 
 student-node ~ ➜  k get all -n ckad01-appstk-sec-aecs
@@ -902,7 +902,7 @@ NAME                                 TYPE        CLUSTER-IP      EXTERNAL-IP   P
 service/ckad01-webapp-service-aecs   NodePort    10.43.190.89    <none>        8080:30080/TCP   3m13s
 service/ckad01-db-svc-aecs           ClusterIP   10.43.117.255   <none>        3306/TCP         3m13s
 
-student-node ~ ➜  kubectl create secret generic ckad01-db-scrt-aecs \
+student-node ~ ➜  ``` kubectl create secret generic ckad01-db-scrt-aecs \
    --namespace=ckad01-appstk-sec-aecs \
    --from-literal=DB_Host=sql01 \
    --from-literal=DB_User=root \
@@ -914,7 +914,7 @@ student-node ~ ➜  k get -n ckad01-appstk-sec-aecs pod ckad01-webapp-pod-aecs -
 student-node ~ ➜  vim webapp-pod-sec-cfg.yaml
 
 student-node ~ ➜  cat webapp-pod-sec-cfg.yaml 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   labels:
@@ -930,11 +930,11 @@ spec:
     - secretRef:
         name: ckad01-db-scrt-aecs
 
-student-node ~ ➜  kubectl replace -f webapp-pod-sec-cfg.yaml --force 
+student-node ~ ➜  ``` kubectl replace -f webapp-pod-sec-cfg.yaml --force 
 pod "ckad01-webapp-pod-aecs" deleted
 pod/ckad01-webapp-pod-aecs replaced
 
-student-node ~ ➜  kubectl exec -n ckad01-appstk-sec-aecs ckad01-webapp-pod-aecs -- printenv | egrep -w 'DB_Password=password123|DB_User=root|DB_Host=sql01'
+student-node ~ ➜  ``` kubectl exec -n ckad01-appstk-sec-aecs ckad01-webapp-pod-aecs -- printenv | egrep -w 'DB_Password=password123|DB_User=root|DB_Host=sql01'
 DB_Password=password123
 DB_User=root
 DB_Host=sql01
@@ -964,29 +964,29 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Create a role named pod-reader in the ckad17-auth-ns namespace, and grant only the list, watch and get permissions on pods resources.
 
 Create a role binding named read-pods in the same namespace, and assign the pod-reader role to a user named jane.
 
 ## Solution
-student-node ~ ➜  kubectl config use-context cluster1
+student-node ~ ➜  ``` kubectl config use-context cluster1
 Switched to context "cluster1".
 
-student-node ~ ➜  kubectl create ns ckad17-auth-ns
+student-node ~ ➜  ``` kubectl create ns ckad17-auth-ns
 
-student-node ~ ➜ kubectl create role pod-reader --namespace=ckad17-auth-ns --verb=list,watch,get --resource=pods
+student-node ~ ➜ ``` kubectl create role pod-reader --namespace=ckad17-auth-ns --verb=list,watch,get --resource=pods
 role.rbac.authorization.k8s.io/pod-reader created
 
-student-node ~ ➜  kubectl create rolebinding read-pods --namespace=ckad17-auth-ns --role=pod-reader --user=jane
+student-node ~ ➜  ``` kubectl create rolebinding read-pods --namespace=ckad17-auth-ns --role=pod-reader --user=jane
 rolebinding.rbac.authorization.k8s.io/read-pods created
 
 # Now let's validate if our role and role binding is working as expected
-student-node ~ ➜  kubectl auth can-i create pod --as jane
+student-node ~ ➜  ``` kubectl auth can-i create pod --as jane
 no
 
-student-node ~ ✖ kubectl auth can-i create pod --as jane --namespace ckad17-auth-ns
+student-node ~ ✖ ``` kubectl auth can-i create pod --as jane --namespace ckad17-auth-ns
 yes
 
 ## Details
@@ -1006,7 +1006,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 A template to create a Kubernetes pod is stored at /root/probe-ckad-aom.yaml on the student-node. Set the initialDelaySeconds to 5. However, using this template results in an error.
 
@@ -1014,7 +1014,7 @@ Fix the issue with this template and use it to create the pod. Once created, wat
 
 ## Solution
 Try to apply the template
-kubectl apply -f probe-ckad-aom.yaml 
+``` kubectl apply -f probe-ckad-aom.yaml 
 
 You will see error:
 
@@ -1028,11 +1028,11 @@ Under livenessProbe: you will see the type is httpGet however the rest of the op
 
 Change httpGet to exec
 Try to apply the template now
-kubectl apply -f probe-ckad-aom.yaml 
+``` kubectl apply -f probe-ckad-aom.yaml 
 
 Cool it worked, now let's watch the POD status, after few seconds you will notice that POD is restarting. So let's check the logs/events
 
-kubectl get event --field-selector involvedObject.name=probe-ckad-aom
+``` kubectl get event --field-selector involvedObject.name=probe-ckad-aom
 
 You will see an error like:
 
@@ -1049,11 +1049,11 @@ vi probe-ckad-aom.yaml
 Change initialDelaySeconds from 1 to 5 and save apply the changes.
 Delete old pod:
 
-kubectl delete pod probe-ckad-aom
+``` kubectl delete pod probe-ckad-aom
 
 Apply changes:
 
-kubectl apply -f probe-ckad-aom.yaml
+``` kubectl apply -f probe-ckad-aom.yaml
 
 ## Details
 
@@ -1070,7 +1070,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Create a pod resou-limit using yaml file provided in the /root/resou-limit-aom.yaml .However, currently, there is an issue in the manifest. Find the issue, fix it and create the pod.
 
@@ -1083,7 +1083,7 @@ the Pod "resou-limit-aom" is invalid: spec.containers[0].resources.requests: Inv
 
 Update the yaml file
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   name: resou-limit-aom
@@ -1099,7 +1099,7 @@ spec:
         cpu: "1"
         memory: "512Mi" 
 
-Now create the pod using kubectl create -f resou-limit-aom.yaml
+Now create the pod using ``` kubectl create -f resou-limit-aom.yaml
 
 ## Details
 
@@ -1114,7 +1114,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 A pod named backend-pod is deployed and exposed with a service service-backend, but it seems the service is not configured properly and is not selecting the correct pod.
 
@@ -1123,11 +1123,11 @@ Make the required changes to service and ensure the endpoint is configured for s
 ## Solution
 Check for service end point by using
 
-kubectl describe svc service-backend
+``` kubectl describe svc service-backend
 
 we can see below output as below
 
-kubectl describe svc service-backend
+``` kubectl describe svc service-backend
 Name:              service-backend
 Namespace:         default
 Labels:            <none>
@@ -1146,12 +1146,12 @@ Events:            <none>
 
 we can see there endpoint value as none. Let's debug this we can see selector as app=ngnix . Lets check label value in pod.
 
-kubectl get pod backend-pod -o json | jq -r .metadata.labels
+``` kubectl get pod backend-pod -o json | jq -r .metadata.labels
   "app": "nginx"
 
 we can see here selector is mis-spelled in service. so edit service and check for endpoint value.
 
-kubectl get ep service-backend
+``` kubectl get ep service-backend
 NAME                     ENDPOINTS                   AGE
 service-backend   10.42.2.4:80,10.42.2.5:80   4m44s
 
@@ -1166,7 +1166,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 A ckad-frontend-pod has been deployed in cluster3 in the ckad-21-production namespace.
 
@@ -1177,18 +1177,18 @@ TIP: Use the imperative method to get manifest file of the pod.
 ## Solution
 Set the context to cluster 2
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 Check for status of pod in ckad-21-production namespace
 
-student-node ~ ➜  kubectl get pods -n ckad-21-production
+student-node ~ ➜  ``` kubectl get pods -n ckad-21-production
 NAME            READY   STATUS            RESTARTS   AGE
 ckad-init-pod   0/1     Init:StartError   0          72s
 
 Error is indicating that there is problem with init container.
 use
 
-kubectl describe pod ckad-frontend-pod -n ckad-21-production
+``` kubectl describe pod ckad-frontend-pod -n ckad-21-production
 
 and observe for following error
 

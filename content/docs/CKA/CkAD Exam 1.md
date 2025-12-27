@@ -237,7 +237,9 @@ NOTE: - We do not need to increase replicas for the deployments, and all the res
 
 You can check the status of the application from the terminal by running the curl command with the following syntax:
 
+```
 curl http://cluster3-controlplane:NODE-PORT
+```
 
 You can SSH into the cluster3 using ssh cluster3-controlplane command.
 
@@ -249,6 +251,7 @@ kubectl config use-context cluster3
 In this task, we will use the kubectl command. Here are the steps: -
 
 Use the kubectl create command to create a deployment manifest file as follows: -
+
 ```
 kubectl create deployment blue-apd --image=kodekloud/webapp-color:v1 --dry-run=client -o yaml > <FILE-NAME-1>.yaml
 ```
@@ -265,6 +268,7 @@ kubectl create service nodeport route-apd-svc --tcp=8080:8080 --dry-run=client -
 
 Open the file with any text editor such as vi or nano and make the changes as per given in the specifications. It should look like this: -
 
+```
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -287,6 +291,7 @@ spec:
       containers:
         - image: kodekloud/webapp-color:v1
           name: blue-apd
+```
 
 We will deploy a total of 10 application pods. Also, we have to route 70% traffic to blue-apd and 30% traffic to the green-apd deployment according to the task description.
 
@@ -294,6 +299,7 @@ Since the service distributes traffic to all pods equally, we have to set the re
 
 green-apd deployment should look like this: -
 
+```
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -335,9 +341,13 @@ spec:
   selector:
     version: v1
 
+```
+
 Now, create a deployment and service by using the kubectl create -f command: -
 
+```
 kubectl create -f <FILE-NAME-1>.yaml -f <FILE-NAME-2>.yaml -f <FILE-NAME-3>.yaml
+```
 
 ## Details
 
@@ -371,7 +381,9 @@ The output of the kubectl describe command includes information about the Pod's 
 It also includes information about the Pod's configuration, such as its labels, annotations, and resource requirements.
 
 Now, we will use the kubectl logs command to retrieve the logs of a container running in a Pod. Use the following command as follows: -
+```
 kubectl logs -n dev-001 <POD-NAME> <CONTAINER-NAME>
+```
 
 Here, <POD-NAME> is the name of the Pod in which the container is running, and <CONTAINER-NAME> is the name of the container whose logs we want to retrieve. If the Pod has only one container, we can omit the <CONTAINER-NAME> argument.
 
@@ -419,7 +431,9 @@ kubectl get ns
 
 It will list all the namespaces. If the given namespace doesn't exist, then run the following command: -
 
+```
 kubectl create ns frontend-apd
+```
 
 Now, on the student-node node and go to the /opt/ directory. We have given the helm chart directory webapp-color-apd that contains templates, values files, and the chart file etc.
 
@@ -435,17 +449,21 @@ These are the values we have to update.
 
 Now, we will use the helm lint command to check the Helm chart because it can identify errors such as missing or misconfigured values, invalid YAML syntax, and deprecated APIs etc.
 
+```
 cd /opt/
 
 helm lint ./webapp-color-apd/
+```
 
 If there is no misconfiguration, we will see the similar output: -
-
+```
 helm lint ./webapp-color-apd/
 ==> Linting ./webapp-color-apd/
 [INFO] Chart.yaml: icon is recommended
 
+
 1 chart(s) linted, 0 chart(s) failed
+```
 
 But in our case, there are some issues with the given templates.
 
@@ -464,15 +482,10 @@ helm ls -n frontend-apd
 ## Details
 
 Is the release name set?
-
 Are the resources deployed on given namespace?
-
 Is the service type defined?
-
 Is the deployment scaled?
-
 Is the application version set?
-
 Are resources running?
 
 ## Q. 8
@@ -491,17 +504,20 @@ Note: Use the imperative command for the above scenario.
 ## Solution
 To use the cluster 3, switch the context using:
 
+```
 kubectl config use-context cluster3
+```
 
 To expose the pod pod22-ckad-svcn at port 6335, we can use the following imperative command.
 
+```
 kubectl expose pod pod22-ckad-svcn --name=svc22-ckad-svcn --port=6335
+```
 
 It will create a service with name svc22-ckad-svcn and pod will be exposed at port 6335.
 ## Details
 
 Is service svc22-ckad-svcn created?
-
 Is the pod exposed at port 6335?
 
 ## Q. 9
@@ -522,6 +538,7 @@ Create the namespace using the following command - kubectl create ns ckad12-svcn
 
 Create the network policy in the namespace ckad12-svcn using the following manifest.
 
+```
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -532,6 +549,7 @@ spec:
   policyTypes:
   - Ingress
   - Egress
+```
 
 ## Details
 
@@ -560,6 +578,7 @@ Fix the issue so that other pods within cluster3 can use external-webserver-ckad
 ## Solution
 Let's check if the webserver is working or not:
 
+```
 student-node ~ ➜  curl student-node:9999
 ...
 <h1>Welcome to nginx!</h1>
@@ -574,9 +593,11 @@ Namespace:         default
 .
 Endpoints:         <none> # there are no endpoints for the service
 ...
+```
 
 As we can see there is no endpoints specified for the service, hence we won't be able to get any output. Since we can not destroy any k8s object, let's create the endpoint manually for this service as shown below:
 
+```
 student-node ~ ➜  export IP_ADDR=$(ifconfig eth0 | grep 'inet ' | awk '{print $2}')
 
 student-node ~ ➜ kubectl apply -f - <<EOF
@@ -594,20 +615,21 @@ endpoints:
   - addresses:
       - $IP_ADDR
 EOF
+```
 
 Finally check if the curl test works now:
 
+```
 student-node ~ ➜  kubectl --context cluster3 run --rm  -i test-curl-pod --image=curlimages/curl --restart=Never -- curl -m 2 external-webserver-ckad01-svcn
 ...
 <title>Welcome to nginx!</title>
 ...
+```
 
 ## Details
 
 Do endpoints exist for external-webserver-ckad01-svcn service ?
-
 Is correct port specified ?
-
 Can other pods use external-webserver-ckad01-svcn service to access webserver?
 
 ## Q. 11
@@ -617,7 +639,9 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster2 by running:
 
+```
 kubectl config use-context cluster2
+```
 
 Deploy a pod with name webapp-svcn using the kodekloud/webapp-color image with the label tier=msg.
 
@@ -626,26 +650,24 @@ Now, Create a service webapp-service-svcn to expose the pod webapp-svcn applicat
 ## Solution
 Switch to cluster2 :
 
+```
 kubectl config use-context cluster2
+```
 
 On student-node, use the command kubectl run webapp-svcn --image=kodekloud/webapp-color -l tier=msg
 
-Now run the command: kubectl expose pod webapp-svcn --port=6379 --name webapp-service-svcn.
+Now run the command: 
+```kubectl expose pod webapp-svcn --port=6379 --name webapp-service-svcn.```
 
 ## Details
 
 Pod Name: webapp-svcn.
 
 Image used is kodekloud/webapp-color.
-
 Pod is created with label tier=msg.
-
 Is service webapp-service-svcn created?
-
 Is port 6379 configured for service?
-
 Is service created is of type "ClusterIP"?
-
 Does the service created use the right labels?
 
 ## Q. 12
@@ -655,7 +677,9 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster1 by running:
 
+```
 kubectl config use-context cluster1
+```
 
 For this scenario, create a Service called ckad12-service that routes traffic to an external IP address.
 
@@ -665,6 +689,8 @@ Create the service in the default namespace.
 
 ## Solution
 Create the service using the following manifest:
+
+```
 
 apiVersion: v1
 kind: Service
@@ -677,13 +703,12 @@ spec:
     - name: http
       port: 53
       targetPort: 53
+```
 
 ## Details
 
 Is service ckad12-service created?
-
 Is service of type - "ExternalName"?
-
 Is service configured with externalName - 8.8.8.8?
 
 ## Q. 13
@@ -691,22 +716,23 @@ Is service configured with externalName - 8.8.8.8?
 Task
 SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 For this question, please set the context to cluster1 by running:
-
-kubectl config use-context cluster1
+```
+kubectl config use-context cluster1```
 
 Create a pod named ckad17-qos-aecs-3 in namespace ckad17-nqoss-aecs with image nginx and container name ckad17-qos-ctr-3-aecs.
 
 Define other fields such that the Pod is configured to use the Quality of Service (QoS) class of Burstable.
 
 Also retrieve the name and QoS class of each Pod in the namespace ckad17-nqoss-aecs in the below format and save the output to a file named qos_status_aecs in the /root directory.
-
+```
 Format:
 
 NAME    QOS
 pod-1   qos_class
 pod-2   qos_class
-
+```
 ## Solution
+```
 student-node ~ ➜ kubectl config use-context cluster1
 Switched to context "cluster1".
 
@@ -736,11 +762,11 @@ ckad17-qos-aecs-2   Guaranteed
 ckad17-qos-aecs-3   Burstable
 
 student-node ~ ➜  kubectl --namespace=ckad17-nqoss-aecs get pod --output=custom-columns="NAME:.metadata.name,QOS:.status.qosClass" > /root/qos_status_aecs
+```
 
 ## Details
 
 Is the pod created with the "QoS" class of 'Burstable'?
-
 Is the QoS class of each pod retrieved in the format mentioned?
 
 ## Q. 14
@@ -749,8 +775,8 @@ Task
 SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster2 by running:
-
-kubectl config use-context cluster2
+```
+kubectl config use-context cluster2 ```
 
 Create a custom resource my-anime of kind Anime with the below specifications:
 
@@ -760,6 +786,7 @@ Episode Count: 37
 TIP: You may find the respective CRD with anime substring in it.
 
 ## Solution
+```
 student-node ~ ➜  kubectl config use-context cluster2
 Switched to context "cluster2".
 
@@ -798,6 +825,8 @@ student-node ~ ➜  k get an my-anime
 NAME       AGE
 my-anime   23s
 
+```
+
 ## Details
 
 Are correct specifications used for custom resource?
@@ -808,12 +837,15 @@ Task
 SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster1 by running:
-
+```
 kubectl config use-context cluster1
+```
 
 Create a ConfigMap named ckad04-config-multi-env-files-aecs in the default namespace from the environment(env) files provided at /root/ckad04-multi-cm directory.
 
 ## Solution
+
+```
 student-node ~ ➜  kubectl config use-context cluster1
 Switched to context "cluster1".
 
@@ -835,6 +867,7 @@ kind: ConfigMap
 metadata:
   name: ckad04-config-multi-env-files-aecs
   namespace: default
+```
 
 ## Details
 
@@ -863,6 +896,9 @@ Secret 3: DB_Password=password123
 
 Configure ckad01-mysql-server to load environment variables from the newly created secret, where the keys from the secret should become the environment variable name in the Pod.
 ## Solution
+
+```
+
 student-node ~ ➜  kubectl config use-context cluster3
 Switched to context "cluster3".
 
@@ -912,24 +948,27 @@ DB_Password=password123
 DB_User=root
 DB_Host=sql01
 
+```
+
 ## Details
 
 Is the secret created with correct values ?
-
 Is the pod configured to use secret as env vars?
 
-## Q. 17
+## Q. 17 Task
 
-Task
 SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster2 by running:
-
+```
 kubectl config use-context cluster2
+```
 
 Create a ResourceQuota called ckad16-rqc in the namespace ckad16-rqc-ns and enforce a limit of one ResourceQuota for the namespace.
 
+
 ## Solution
+```
 student-node ~ ➜  kubectl config use-context cluster2
 Switched to context "cluster2".
 
@@ -953,6 +992,8 @@ student-node ~ ➜  k get resourcequotas -n ckad16-rqc-ns
 NAME              AGE   REQUEST               LIMIT
 ckad16-rqc   20s   resourcequotas: 1/1   
 
+```
+
 ## Details
 
 Is resource quota created?
@@ -964,7 +1005,9 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster2 by running:
 
+```
 kubectl config use-context cluster2
+```
 
 Using the pod template on student-node at /root/ckad08-dotfile-aecs.yaml , create a pod ckad18-secret-pod in the namespace ckad18-secret with the specifications as defined below:
 
@@ -973,6 +1016,8 @@ Define a volume section named secret-volume that is backed by a Kubernetes Secre
 Mount the secret-volume volume to the container's /etc/secret-volume directory in read-only mode, so that the container can access the secrets stored in the ckad18-secret-aecs secret.
 
 ## Solution
+
+```
 cat << 'EOF' | kubectl apply -f -
 apiVersion: v1
 kind: Pod
@@ -997,6 +1042,7 @@ spec:
       readOnly: true
       mountPath: "/etc/secret-volume"
 EOF
+```
 
 ## Details
 
@@ -1028,6 +1074,8 @@ Note: You need to recreate the pod to add the readiness probe configuration.
 ## Solution
 Use the following YAML file and create a file - for example, simple-webapp-aom.yaml:
 
+```
+
 cat <<EOF > simple-webapp-aom.yaml
 apiVersion: v1
 kind: Pod
@@ -1049,9 +1097,13 @@ spec:
       periodSeconds: 5
 EOF
 
+```
+
 To recreate the pod, run the command:
 
+```
 kubectl replace -f simple-webapp-aom.yaml --force
+```
 
 ## Details
 
@@ -1080,6 +1132,7 @@ There is error with manifest file correct the file and create resource.
 
 ## Solution
 You will see following error
+```
 
 student-node ~ ➜  kubectl create -f ckad-pod-busybox.yaml
 Error from server (BadRequest): error when creating "ckad-pod-busybox.yaml": Pod in version "v1" cannot be handled as a Pod.
@@ -1098,6 +1151,8 @@ spec:
       image: busybox
       name: pods-simple-container
 
+```
+
 ## Details
 
 Is the pod ckad-pod-busybox running?
@@ -1113,19 +1168,25 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+```
+kubectl config use-context cluster3 
+```
 
 Create a new pod with image redis and name ckad-probe and configure the pod with livenessProbe with command ls and set initialDelaySeconds to 5 .
 
 TIP: - Make use of the imperative command to create the above pod.
 
 ## Solution
+
 Using imperative command
 
+```
 kubectl run ckad-probe --image=redis  --dry-run=client -o yaml > ckad-probe.yaml
+```
 
 Use the following YAML file update yaml with livenessProbe
 
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1148,6 +1209,7 @@ spec:
   restartPolicy: Never
 status: {}
 
+```
 To recreate the pod, run the command:
 
 kubectl create -f ckad-probe.yaml

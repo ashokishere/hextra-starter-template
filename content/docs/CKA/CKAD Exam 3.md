@@ -13,7 +13,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In the ckad-job namespace, create a cronjob named simple-python-job to run every 30 minutes to list all the running processes inside a container that used python image (the command needs to be run in a shell).
 
@@ -22,7 +22,7 @@ In Unix-based operating systems, ps -eaf can be use to list all the running proc
 ## Solution
 Create a YAML file with the content as below:
 
-apiVersion: batch/v1
+```  apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: simple-python-job
@@ -43,11 +43,11 @@ spec:
             - ps -eaf
           restartPolicy: OnFailure
 
-Then use kubectl apply -f file_name.yaml to create the required object.
+Then use ``` kubectl apply -f file_name.yaml to create the required object.
 
 You can also use below command to create cronjob
 
-kubectl create cronjob simple-python-job -n ckad-job  --image=python --schedule="*/30 * * * *" -- /bin/bash -c "ps -eaf"
+``` kubectl create cronjob simple-python-job -n ckad-job  --image=python --schedule="*/30 * * * *" -- /bin/bash -c "ps -eaf"
 
 ## Details
 
@@ -66,7 +66,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In the ckad-pod-design namespace, start a ckad-nginx-uahsbcbdkl pod running the nginx:1.17 image.
 
@@ -79,7 +79,7 @@ The pod should not be restarted in any case if it has already exited.
 ## Solution
 Create a YAML file with the content as below:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
@@ -96,11 +96,11 @@ spec:
   restartPolicy: Never
 status: {}
 
-Then use kubectl apply -f file_name.yaml to create the required object.
+Then use ``` kubectl apply -f file_name.yaml to create the required object.
 
 Alternatively, you can use this command for similar outcome:
 
-kubectl run ckad-nginx-uahsbcbdkl --image=nginx:1.17 -n ckad-pod-design -l TRAINER=KODEKLOUD --restart=Never
+``` kubectl run ckad-nginx-uahsbcbdkl --image=nginx:1.17 -n ckad-pod-design -l TRAINER=KODEKLOUD --restart=Never
 
 ## Details
 
@@ -119,7 +119,7 @@ Task
 ## Solution
 Create a YAML file with the content as below:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
@@ -139,11 +139,11 @@ spec:
   restartPolicy: Always
 status: {}
 
-Then use kubectl apply -f file_name.yaml to create the required object.
+Then use ``` kubectl apply -f file_name.yaml to create the required object.
 
 Alternatively, you can use this command for similar outcome:
 
-kubectl run ckad-busybox-gsqodeuykj --image=busybox:1.28 -n ckad-pod-design --command sleep 3600 
+``` kubectl run ckad-busybox-gsqodeuykj --image=busybox:1.28 -n ckad-pod-design --command sleep 3600 
 
 ## Details
 
@@ -160,7 +160,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 In the ckad-multi-containers namespace, create a pod named cuda-pod, which has 2 containers matching the below requirements:
 
@@ -173,7 +173,7 @@ NOTE: All pod containers should be in the running state.
 ## Solution
 Use below YAML to create desired pod:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
@@ -223,7 +223,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In the ckad-pod-design namespace, we created a pod named custom-nginx that runs the nginx:1.17 image.
 
@@ -236,12 +236,12 @@ NOTE: By default NGINX web server default location is at /usr/share/nginx/html w
 ## Solution
 Exec to the pod container and update the index.html file content:
 
-student-node ~ ➜kubectl exec -it -n ckad-pod-design custom-nginx -- sh
+student-node ~ ➜``` kubectl exec -it -n ckad-pod-design custom-nginx -- sh
 # echo 'Welcome to CKAD mock exams!' > /usr/share/nginx/html/index.html
 
 Observe the result:
 
-student-node ~ ➜  kubectl exec -it -n ckad-pod-design custom-nginx -- cat /usr/share/nginx/html/index.html
+student-node ~ ➜  ``` kubectl exec -it -n ckad-pod-design custom-nginx -- cat /usr/share/nginx/html/index.html
 Welcome to CKAD mock exams!
 
 ## Details
@@ -257,22 +257,22 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Create a deployment called app-apd01 using the nginx image and scale the application pods to 3.
 
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Run the following command: -
 
-kubectl create deployment app-apd01 --image=nginx --replicas=3
+``` kubectl create deployment app-apd01 --image=nginx --replicas=3
 
-To cross-verify the deployed resources, run the kubectl get command as follows: -
+To cross-verify the deployed resources, run the ``` kubectl get command as follows: -
 
-kubectl get pods,deployments
+``` kubectl get pods,deployments
 
 ## Details
 
@@ -305,7 +305,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In this task, we have to create two identical environments that are running different versions of the application. The team decided to use the Blue/green deployment method to deploy a total of 10 application pods which can mitigate common risks such as downtime and rollback capability.
 
@@ -342,24 +342,24 @@ You can SSH into the cluster1 using ssh cluster1-controlplane command.
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
-In this task, we will use the kubectl command. Here are the steps: -
+In this task, we will use the ``` kubectl command. Here are the steps: -
 
-Use the kubectl create command to create a deployment manifest file as follows: -
+Use the ``` kubectl create command to create a deployment manifest file as follows: -
 
-kubectl create deployment blue-apd --image=kodekloud/webapp-color:v1 --dry-run=client -o yaml > <FILE-NAME-1>.yaml
+``` kubectl create deployment blue-apd --image=kodekloud/webapp-color:v1 --dry-run=client -o yaml > <FILE-NAME-1>.yaml
 
 Do the same for the other deployment and service.
 
-kubectl create deployment green-apd --image=kodekloud/webapp-color:v2 --dry-run=client -o yaml > <FILE-NAME-2>.yaml
+``` kubectl create deployment green-apd --image=kodekloud/webapp-color:v2 --dry-run=client -o yaml > <FILE-NAME-2>.yaml
 
-kubectl create service nodeport route-apd-svc --tcp=8080:8080 --dry-run=client -oyaml > <FILE-NAME-3>.yaml
+``` kubectl create service nodeport route-apd-svc --tcp=8080:8080 --dry-run=client -oyaml > <FILE-NAME-3>.yaml
 
 Open the file with any text editor such as vi or nano and make the changes as per given in the specifications. It should look like this: -
 
 ---
-apiVersion: apps/v1
+```  apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -388,7 +388,7 @@ Since the service distributes traffic to all pods equally, we have to set the re
 green-apd deployment should look like this: -
 
 ---
-apiVersion: apps/v1
+```  apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -413,7 +413,7 @@ spec:
 route-apd-svc service should look like this: -
 
 ---
-apiVersion: v1
+```  apiVersion: v1
 kind: Service
 metadata:
   labels:
@@ -428,9 +428,9 @@ spec:
   selector:
     version: v1
 
-Now, create a deployment and service by using the kubectl create -f command: -
+Now, create a deployment and service by using the ``` kubectl create -f command: -
 
-kubectl create -f <FILE-NAME-1>.yaml -f <FILE-NAME-2>.yaml -f <FILE-NAME-3>.yaml
+``` kubectl create -f <FILE-NAME-1>.yaml -f <FILE-NAME-2>.yaml -f <FILE-NAME-3>.yaml
 
 ## Details
 
@@ -447,7 +447,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 We have deployed several applications in the ns-ckad17-svcn namespace that are exposed inside the cluster via ClusterIP.
 
@@ -460,26 +460,26 @@ Service lb2-ckad17-svcn for serving traffic at port 31891 to pods with labels "e
 To create the loadbalancer for the pods with the specified lables, first we need to find the pods with the mentioned lables.
 
 To get pods with labels "exam=ckad, criteria=location"
-kubectl -n ns-ckad17-svcn get pod -l exam=ckad,criteria=location
+``` kubectl -n ns-ckad17-svcn get pod -l exam=ckad,criteria=location
 -----
 NAME               READY   STATUS    RESTARTS   AGE
 geo-location-app   1/1     Running   0          10m
 
 Similarly to get pods with labels "exam=ckad,criteria=cpu-high".
-kubectl -n ns-ckad17-svcn get pod -l exam=ckad,criteria=cpu-high
+``` kubectl -n ns-ckad17-svcn get pod -l exam=ckad,criteria=cpu-high
 -----
 NAME           READY   STATUS    RESTARTS   AGE
 cpu-load-app   1/1     Running   0          11m
 
 Now we know which pods use the labels, we can create the LoadBalancer type service using the imperative command.
 
-kubectl -n ns-ckad17-svcn expose pod geo-location-app --type=LoadBalancer --name=lb1-ckad17-svcn
+``` kubectl -n ns-ckad17-svcn expose pod geo-location-app --type=LoadBalancer --name=lb1-ckad17-svcn
 
 Similarly, create the another service.
 
-kubectl -n ns-ckad17-svcn expose pod cpu-load-app --type=LoadBalancer --name=lb2-ckad17-svcn
+``` kubectl -n ns-ckad17-svcn expose pod cpu-load-app --type=LoadBalancer --name=lb2-ckad17-svcn
 
-Once the services are created, you can edit the services to use the correct nodePorts as per the question using kubectl -n ns-ckad17-svcn edit svc lb2-ckad17-svcn.
+Once the services are created, you can edit the services to use the correct nodePorts as per the question using ``` kubectl -n ns-ckad17-svcn edit svc lb2-ckad17-svcn.
 ## Details
 
 Is service lb1-ckad17-svcn created?
@@ -501,7 +501,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 We have created a Network Policy netpol-ckad13-svcn that allows traffic only to specific pods and it allows traffic only from pods with specific labels.
 
@@ -512,11 +512,11 @@ Do not change the existing rules in the policy.
 ## Solution
 To edit the existing network policy use the following command:
 
-kubectl edit netpol netpol-ckad13-svcn
+``` kubectl edit netpol netpol-ckad13-svcn
 
 Edit the policy as follows:
 
-apiVersion: networking.k8s.io/v1
+```  apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: netpol-ckad13-svcn
@@ -547,7 +547,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 We have created a deployment of an application named nginx-app-ckad in the default namespace.
 
@@ -559,14 +559,14 @@ Expose port 443 using TCP with the name https
 The pod app-ckad-svcn is deployed in default namespace.
 
 To view the pod along with labels, use the following command.
-student-node ~ ➜  kubectl get deployments.apps nginx-app-ckad --show-labels 
+student-node ~ ➜  ``` kubectl get deployments.apps nginx-app-ckad --show-labels 
 NAME             READY   UP-TO-DATE   AVAILABLE   AGE     LABELS
 nginx-app-ckad   3/3     3            3           5m21s   app=nginx-app-ckad
 
 We will use those labels to create the service.
 
 Create a service using the following manifest. It will create a service with multiple ports expose with different protocols.
-apiVersion: v1
+```  apiVersion: v1
 kind: Service
 metadata:
   name: nginx-svcn
@@ -610,29 +610,29 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 Create a role named pod-creater in the ckad20-auth-aecs namespace, and grant only the list, create and get permissions on pods resources.
 
 Create a role binding named mock-user-binding in the same namespace, and assign the pod-creater role to a user named mock-user.
 
 ## Solution
-student-node ~ ➜  kubectl config use-context cluster3
+student-node ~ ➜  ``` kubectl config use-context cluster3
 Switched to context "cluster3".
 
-student-node ~ ➜  kubectl create ns ckad20-auth-aecs
+student-node ~ ➜  ``` kubectl create ns ckad20-auth-aecs
 
-student-node ~ ➜ kubectl create role pod-creater --namespace=ckad20-auth-aecs --verb=list,create,get --resource=pods
+student-node ~ ➜ ``` kubectl create role pod-creater --namespace=ckad20-auth-aecs --verb=list,create,get --resource=pods
 role.rbac.authorization.k8s.io/pod-creater created
 
-student-node ~ ➜  kubectl create rolebinding mock-user-binding --namespace=ckad20-auth-aecs --role=pod-creater --user=mock-user
+student-node ~ ➜  ``` kubectl create rolebinding mock-user-binding --namespace=ckad20-auth-aecs --role=pod-creater --user=mock-user
 rolebinding.rbac.authorization.k8s.io/mock-user-binding created
 
 # Now let's validate if our role and role binding is working as expected
-student-node ~ ➜  kubectl auth can-i create pod --as mock-user
+student-node ~ ➜  ``` kubectl auth can-i create pod --as mock-user
 no
 
-student-node ~ ✖ kubectl auth can-i create pod --as mock-user --namespace ckad20-auth-aecs
+student-node ~ ✖ ``` kubectl auth can-i create pod --as mock-user --namespace ckad20-auth-aecs
 yes
 
 ## Details
@@ -651,7 +651,7 @@ Task
 SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 In the ckad14-sa-projected namespace, configure the ckad14-api-pod Pod to include a projected volume named vault-token.
 
@@ -660,13 +660,13 @@ Mount the service account token to the container at /var/run/secrets/tokens, wit
 Additionally, set the intended audience for the token to vault and path to vault-token.
 
 ## Solution
-student-node ~ ➜  kubectl config use-context cluster3
+student-node ~ ➜  ``` kubectl config use-context cluster3
 Switched to context "cluster3".
 
 student-node ~ ➜  k get pod -n ckad14-sa-projected ckad14-api-pod -o yaml > ckad-pro-vol.yaml
 
 student-node ~ ➜  cat ckad-pro-vol.yaml
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   name: ckad14-api-pod
@@ -715,7 +715,7 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 Create a custom resource my-anime of kind Anime with the below specifications:
 
@@ -725,13 +725,13 @@ Episode Count: 220
 TIP: You may find the respective CRD with anime substring in it.
 
 ## Solution
-student-node ~ ➜  kubectl config use-context cluster3
+student-node ~ ➜  ``` kubectl config use-context cluster3
 Switched to context "cluster3".
 
-student-node ~ ➜  kubectl get crd | grep -i anime
+student-node ~ ➜  ``` kubectl get crd | grep -i anime
 animes.animes.k8s.io
 
-student-node ~ ➜  kubectl get crd animes.animes.k8s.io \
+student-node ~ ➜  ``` kubectl get crd animes.animes.k8s.io \
                  -o json \
                  | jq .spec.versions[].schema.openAPIV3Schema.properties.spec.properties
 {
@@ -748,8 +748,8 @@ student-node ~ ➜  kubectl get crd animes.animes.k8s.io \
 student-node ~ ➜  k api-resources | grep anime
 animes                            an           animes.k8s.io/v1alpha1                 true         Anime
 
-student-node ~ ➜  cat << YAML | kubectl apply -f -
- apiVersion: animes.k8s.io/v1alpha1
+student-node ~ ➜  cat << YAML | ``` kubectl apply -f -
+ ```  apiVersion: animes.k8s.io/v1alpha1
  kind: Anime
  metadata:
    name: my-anime
@@ -774,14 +774,14 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 Create a service account dashboard-sa in the namespace levantest.
 
 ## Solution
 We can use the below command to create the service account.
 
-kubectl create serviceaccount dashboard-sa -n levantest
+``` kubectl create serviceaccount dashboard-sa -n levantest
 
 ## Details
 
@@ -794,7 +794,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 A pod named ckad-nginx-pod-aom is deployed and exposed with a service ckad-nginx-service-aom, but it seems the service is not configured properly and is not selecting the correct pod.
 
@@ -803,11 +803,11 @@ Make the required changes to service and ensure the endpoint is configured for s
 ## Solution
 Check for service end point by using
 
-kubectl describe svc ckad-nginx-service-aom
+``` kubectl describe svc ckad-nginx-service-aom
 
 we can see below output as below
 
-kubectl describe svc ckad-nginx-service-aom
+``` kubectl describe svc ckad-nginx-service-aom
 Name:              ckad-nginx-service-aom
 Namespace:         default
 Labels:            <none>
@@ -826,12 +826,12 @@ Events:            <none>
 
 we can see there endpoint value as none. Let's debug this we can see selector as app=ngnix . Lets check label value in pod.
 
-kubectl get pod ckad-nginx-pod-aom -o json | jq -r .metadata.labels
+``` kubectl get pod ckad-nginx-pod-aom -o json | jq -r .metadata.labels
   "app": "nginx"
 
 we can see here selector is mis-spelled in service. so edit service and check for endpoint value.
 
-kubectl get ep ckad-nginx-service-aom
+``` kubectl get ep ckad-nginx-service-aom
 NAME                     ENDPOINTS                   AGE
 ckad-nginx-service-aom   10.42.2.4:80,10.42.2.5:80   4m44s
 
@@ -846,14 +846,14 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 View the metrics (CPU and Memory) of the node cluster2-node01 and copy the output to the /root/node-metrics file in nodeName, CPU and memory.
 
 ## Solution
 Use the following command to get ## Details:
 
-kubectl top nodes cluster2-node01 > /root/node-metrics
+``` kubectl top nodes cluster2-node01 > /root/node-metrics
 
 ## Details
 
@@ -866,7 +866,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 A template to create a Kubernetes pod is stored at /root/goproxy.yaml on the student-node. Set the initialDelaySeconds to 5. However, using this template results in an error.
 
@@ -874,7 +874,7 @@ Fix the issue with this template and use it to create the pod. Once created, wat
 
 ## Solution
 Try to apply the template
-kubectl apply -f goproxy.yaml 
+``` kubectl apply -f goproxy.yaml 
 
 You will see error:
 
@@ -888,11 +888,11 @@ Under livenessProbe: you will see the type is httpGet however the rest of the op
 
 Change httpGet to exec
 Try to apply the template now
-kubectl apply -f goproxy.yaml 
+``` kubectl apply -f goproxy.yaml 
 
 Cool it worked, now let's watch the POD status, after few seconds you will notice that POD is restarting. So let's check the logs/events
 
-kubectl get event --field-selector involvedObject.name=goproxy
+``` kubectl get event --field-selector involvedObject.name=goproxy
 
 You will see an error like:
 
@@ -909,11 +909,11 @@ vi goproxy.yaml
 Change initialDelaySeconds from 1 to 5 and save apply the changes.
 Delete old pod:
 
-kubectl delete pod goproxy
+``` kubectl delete pod goproxy
 
 Apply changes:
 
-kubectl apply -f goproxy.yaml
+``` kubectl apply -f goproxy.yaml
 
 ## Details
 
@@ -930,7 +930,7 @@ SECTION: SERVICE NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 Part I:
 
@@ -951,11 +951,11 @@ pod-2           ip-3
 ## Solution
 Switching to cluster3:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 The easiest way to route traffic to a specific pod is by the use of labels and selectors . List the pods along with their labels:
 
-student-node ~ ➜  kubectl get pods --show-labels -n spectra-1267
+student-node ~ ➜  ``` kubectl get pods --show-labels -n spectra-1267
 NAME     READY   STATUS    RESTARTS   AGE     LABELS
 pod-12   1/1     Running   0          5m21s   env=dev,mode=standard,type=external
 pod-34   1/1     Running   0          5m20s   env=dev,mode=standard,type=internal
@@ -966,21 +966,21 @@ pod-21   1/1     Running   0          5m20s   env=prod,mode=exam,type=external
 
 Looks like there are a lot of pods created to confuse us. But we are only concerned with the labels of pod-23 and pod-21.
 
-As we can see both the required pods have labels mode=exam,type=external in common. Let's confirm that using kubectl too:
+As we can see both the required pods have labels mode=exam,type=external in common. Let's confirm that using ``` kubectl too:
 
-student-node ~ ➜  kubectl get pod -l mode=exam,type=external -n spectra-1267                                    
+student-node ~ ➜  ``` kubectl get pod -l mode=exam,type=external -n spectra-1267                                    
 NAME     READY   STATUS    RESTARTS   AGE
 pod-23   1/1     Running   0          9m18s
 pod-21   1/1     Running   0          9m17s
 
 Nice!! Now as we have figured out the labels, we can proceed further with the creation of the service:
 
-student-node ~ ➜  kubectl create service clusterip service-3421-svcn -n spectra-1267 --tcp=8080:80 --dry-run=client -o yaml > service-3421-svcn.yaml
+student-node ~ ➜  ``` kubectl create service clusterip service-3421-svcn -n spectra-1267 --tcp=8080:80 --dry-run=client -o yaml > service-3421-svcn.yaml
 
 Now modify the service definition with selectors as required before applying to k8s cluster:
 
 student-node ~ ➜  cat service-3421-svcn.yaml 
-apiVersion: v1
+```  apiVersion: v1
 kind: Service
 metadata:
   creationTimestamp: null
@@ -1004,7 +1004,7 @@ status:
 
 Finally let's apply the service definition:
 
-student-node ~ ➜  kubectl apply -f service-3421-svcn.yaml
+student-node ~ ➜  ``` kubectl apply -f service-3421-svcn.yaml
 service/service-3421 created
 
 student-node ~ ➜  k get ep service-3421-svcn -n spectra-1267
@@ -1013,7 +1013,7 @@ service-3421   10.42.0.15:80,10.42.0.17:80   52s
 
 To store all the pod name along with their IP's , we could use imperative command as shown below:
 
-student-node ~ ➜  kubectl get pods -n spectra-1267 -o=custom-columns='POD_NAME:metadata.name,IP_ADDR:status.podIP' --sort-by=.status.podIP
+student-node ~ ➜  ``` kubectl get pods -n spectra-1267 -o=custom-columns='POD_NAME:metadata.name,IP_ADDR:status.podIP' --sort-by=.status.podIP
 
 POD_NAME   IP_ADDR
 pod-12     10.42.0.18
@@ -1023,7 +1023,7 @@ pod-21     10.42.0.21
 ...
 
 # store the output to /root/pod_ips
-student-node ~ ➜  kubectl get pods -n spectra-1267 -o=custom-columns='POD_NAME:metadata.name,IP_ADDR:status.podIP' --sort-by=.status.podIP > /root/pod_ips_cka05_svcn
+student-node ~ ➜  ``` kubectl get pods -n spectra-1267 -o=custom-columns='POD_NAME:metadata.name,IP_ADDR:status.podIP' --sort-by=.status.podIP > /root/pod_ips_cka05_svcn
 
 ## Details
 

@@ -13,14 +13,14 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` ``` kubectl config use-context cluster1
 
 In the ckad-pod-design namespace, create a pod named privileged-pod that runs the nginx:1.17 image, and the container should be run in privileged mode.
 
 ## Solution
 Use below YAML to create the desired pod:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
@@ -39,9 +39,9 @@ spec:
   restartPolicy: Always
 status: {}
 
-Or in short, use this kubectl command for the same output:
+Or in short, use this ``` ``` kubectl command for the same output:
 
-kubectl run privileged-pod --image=nginx:1.17 --privileged=true -n ckad-pod-design
+``` kubectl run privileged-pod --image=nginx:1.17 --privileged=true -n ckad-pod-design
 
 ## Details
 
@@ -58,7 +58,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 In the ckad-job namespace, create a job named very-long-pi that simply computes a π (pi) to 1024 places and prints it out.
 
@@ -73,7 +73,7 @@ perl -Mbignum=bpi -wle 'print bpi(1024)'
 ## Solution
 Use below YAML to create job:
 
-apiVersion: batch/v1
+```  apiVersion: batch/v1
 kind: Job
 metadata:
   name: very-long-pi
@@ -92,9 +92,9 @@ spec:
 You can verify the output by running below command against the job's pod (noted that the pod name will be different):
 
 Identify pod name by this command:
-kubectl get pod -n ckad-job -l job-name=very-long-pi
+``` kubectl get pod -n ckad-job -l job-name=very-long-pi
 
-kubectl logs very-long-pi-4zvcc -n ckad-job 
+``` kubectl logs very-long-pi-4zvcc -n ckad-job 
 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481117450284102701938521105559644622948954930381964428810975665933446128475648233786783165271201909145648566923460348610454326648213393607260249141273724587006606315588174881520920962829254091715364367892590360011330530548820466521384146951941511609433057270365759591953092186117381932611793105118548074462379962749567351885752724891227938183011949129833673362440656643086021394946395224737190702179860943702770539217176293176752384674818467669405132000568127145263560827785771342757789609173637178721468440901224953430146549585371050792279689258923542019956112129021960864034418159813629774771309960518707211349999998372978049951059731732816096318595024459455346908302642522308253344685035261931188171010003137838752886587533208381420617177669147303598253490428755468731159562863882353787593751957781857780532171226806613001927876611195909216420198938095257201065485863279
 
 ## Details
@@ -116,14 +116,14 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Create a persistent volume called red-pv-ckad03-str of type: hostPath and capacity: 100Mi.
 
 ## Solution
 Use below YAML to create required volume:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: red-pv-ckad03-str
@@ -146,7 +146,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 In the ckad-multi-containers namespaces, create a ckad-web-pod pod with sidecar container that matches the following requirements.
 
@@ -161,7 +161,7 @@ Every 5 seconds, this container should write the current date along with greetin
 ## Solution
 Use below YAML to create the desired pod:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   namespace: ckad-multi-containers
@@ -195,7 +195,7 @@ spec:
 
 You can verify the logs with below command:
 
-kubectl exec -n ckad-multi-containers ckad-web-pod --container  web-app -- cat /usr/share/nginx/html/index.html
+``` kubectl exec -n ckad-multi-containers ckad-web-pod --container  web-app -- cat /usr/share/nginx/html/index.html
 
 Similar logs should be displayed as below:
 
@@ -223,7 +223,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 A web application running on cluster2 called robox-west-apd on the fusion-apd-x1df5 namespace. The Ops team has created a new service account with a set of permissions for this web application. Update the newly created SA for this deployment.
 
@@ -232,13 +232,13 @@ Also, change the strategy type to Recreate, so it will delete all the pods immed
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
-In this task, we will use the kubectl command. Here are the steps: -
+In this task, we will use the ``` kubectl command. Here are the steps: -
 
-Use the kubectl get command to list all the given resources: -
+Use the ``` kubectl get command to list all the given resources: -
 
-kubectl get po,deploy,sa,ns -n fusion-apd-x1df5
+``` kubectl get po,deploy,sa,ns -n fusion-apd-x1df5
 
 Here -n option stands for namespace, which is used to specify the namespace.
 
@@ -246,17 +246,17 @@ The above command will list all the resources from the fusion-apd-x1df5 namespac
 
 Inspect the service account is used by the pods/deployment.
 
-kubectl get deploy -n fusion-apd-x1df5 robox-west-apd -oyaml
+``` kubectl get deploy -n fusion-apd-x1df5 robox-west-apd -oyaml
 
 The deployment is using the default service account.
 
-Now, use the kubectl get command to retrieves the YAML definition of a deployment named robox-west-apd and save it into a file.
+Now, use the ``` kubectl get command to retrieves the YAML definition of a deployment named robox-west-apd and save it into a file.
 
-kubectl get deploy -n fusion-apd-x1df5 robox-west-apd -o yaml > <FILE-NAME>.yaml
+``` kubectl get deploy -n fusion-apd-x1df5 robox-west-apd -o yaml > <FILE-NAME>.yaml
 
 Open a VI editor. Make the necessary changes and save it. It should look like this: -
 
-apiVersion: apps/v1
+```  apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -283,7 +283,7 @@ spec:
 
 Now, replace the resource with the following command:
 
-kubectl replace -f <FILE-NAME>.yaml --force
+``` kubectl replace -f <FILE-NAME>.yaml --force
 
 The above command will delete the existing deployment and create a new one with changes in the given namespace.
 
@@ -300,7 +300,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 On the cluster1, the team has installed multiple helm charts on a different namespace. By mistake, those deployed resources include one of the vulnerable images called kodekloud/click-counter:latest. Find out the release name and uninstall it.
 
@@ -311,22 +311,22 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 Create a deployment called rocket-apd20 using the nginx:alpine image to the aerospace-xgh12fd namespace.
 
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 Run the following command: -
 
-kubectl create deployment rocket-apd20 --image=nginx:alpine -n aerospace-xgh12fd
+``` kubectl create deployment rocket-apd20 --image=nginx:alpine -n aerospace-xgh12fd
 
-To cross-verify the deployed resources, run the kubectl get command as follows: -
+To cross-verify the deployed resources, run the ``` kubectl get command as follows: -
 
-kubectl get pods,deployments -n aerospace-xgh12fd
+``` kubectl get pods,deployments -n aerospace-xgh12fd
 
 ## Details
 
@@ -339,12 +339,12 @@ Task
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Use the following template to create a deployment called web-deployment: -
 
 ---
-apiVersion: apps/v1
+```  apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -369,17 +369,17 @@ spec:
       - image: kodekloud/webapp-color:v1
         name: webapp-color
 
-Now, create the deployment by using the kubectl create -f command in the default namespace: -
+Now, create the deployment by using the ``` kubectl create -f command in the default namespace: -
 
-kubectl create -f <FILE-NAME>.yaml
+``` kubectl create -f <FILE-NAME>.yaml
 
 After sometime, upgrade the deployment image to kodekloud/webapp-color:v2: -
 
-kubectl set image deploy web-deployment webapp-color=kodekloud/webapp-color:v2
+``` kubectl set image deploy web-deployment webapp-color=kodekloud/webapp-color:v2
 
 And check out the rollout history of the deployment web-deployment: -
 
-kubectl rollout history deploy web-deployment
+``` kubectl rollout history deploy web-deployment
 deployment.apps/web-deployment 
 REVISION  CHANGE-CAUSE
 1         <none>
@@ -393,11 +393,11 @@ echo "2" > /opt/ocean-revision-count.txt
 
 In final task, rollback the deployment image to an old version: -
 
-kubectl rollout undo deployment web-deployment
+``` kubectl rollout undo deployment web-deployment
 
 Verify the image name by using the following command: -
 
-kubectl describe deploy web-deployment | grep -i image
+``` kubectl describe deploy web-deployment | grep -i image
 
 It should be kodekloud/webapp-color:v1 image.
 
@@ -422,7 +422,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 On cluster2, a new deployment called cube-alpha-apd has been created in the alpha-ns-apd namespace using the image kodekloud/webapp-color:v2. This deployment will test a newer version of the alpha app.
 
@@ -433,21 +433,21 @@ NOTE: - Do not increase the replicas of the ruby-alpha-apd deployment.
 ## Solution
 Run the following command to change the context: -
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
-In this task, we will use the kubectl command. Here are the steps: -
+In this task, we will use the ``` kubectl command. Here are the steps: -
 
 The cube-alpha-apd and ruby-alpha-apd deployment has 5-5 replicas. The alpha-apd-service service now routes traffic to 10 pods in total (5 replicas on the ruby-alpha-apd deployment and 5 replicas from cube-alpha-apd deployment).
 
-Use the kubectl get command to list the following deployments: -
+Use the ``` kubectl get command to list the following deployments: -
 
-kubectl get deploy -n alpha-ns-apd
+``` kubectl get deploy -n alpha-ns-apd
 
 Since the service distributes traffic to all pods equally, in this case, approximately 50% of the traffic will go to cube-alpha-apd deployment.
 
 To reduce this below 40%, scale down the pods on the cube-alpha-apd deployment to the minimum to 2.
 
-kubectl scale deployment --replicas=2 cube-alpha-apd -n alpha-ns-apd
+``` kubectl scale deployment --replicas=2 cube-alpha-apd -n alpha-ns-apd
 
 Once this is done, only ~40% of traffic should go to the v2 version.
 
@@ -462,7 +462,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 We have deployed an application in the green-space namespace. we also deployed the ingress controller and the ingress resource.
 
@@ -519,12 +519,12 @@ Apply the manifest, it should be up and running.
 Fix Ingress Resource Path Names
 
 Check the current Ingress paths:
-kubectl get ingress ingress-resource-uxz -n green-space -o yaml
+``` kubectl get ingress ingress-resource-uxz -n green-space -o yaml
 
 You will see paths like /app1 and /app2 pointing to app-wear-service and app-video-service.
 Edit the Ingress resource to match your application endpoints:
 
-kubectl edit ingress ingress-resource-uxz -n green-space
+``` kubectl edit ingress ingress-resource-uxz -n green-space
 
 Update the paths as follows:
 
@@ -596,7 +596,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 For this scenario, we have already deployed an application in the global-space. Inspect them and create an ingress resource with name ingress-resource-xnz to make the application available at /eat on the Ingress service. Use ingress class of nginx.
 
@@ -612,11 +612,11 @@ Make sure the paths select the correct backend services.
 ## Solution
 Switch to cluster2 by using the following command:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 To view the applications running on global-space namespace, run the following.
 
-cluster2-controlplane ~ ➜  kubectl get pod,svc -n global-space
+cluster2-controlplane ~ ➜  ``` kubectl get pod,svc -n global-space
 NAME                                 READY   STATUS    RESTARTS   AGE
 pod/default-backend-b46b9989-p9h28   1/1     Running   0          95s
 pod/webapp-food-dcd846f95-khhmw      1/1     Running   0          95s
@@ -630,7 +630,7 @@ We have service food-service configured, this will act as backend service for /e
 Using Command Line
 
 Create an ingress resource using the following imperative command:
-kubectl create ingress ingress-resource-xnz \
+``` kubectl create ingress ingress-resource-xnz \
   --namespace global-space \
   --rule='/eat'='food-service:8080' \
   --annotation='nginx.ingress.kubernetes.io/rewrite-target=/' \
@@ -641,7 +641,7 @@ Using manifest file
 
 ## Solution manifest file to create a ingress resource as follows:
 ---
-apiVersion: networking.k8s.io/v1
+```  apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-resource-xnz
@@ -671,19 +671,19 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Create an nginx pod called nginx-resolver-ckad03-svcn using image nginx, and expose it internally at port 80 with a service called nginx-resolver-service-ckad03-svcn.
 
 ## Solution
 Switching to cluster1:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 To create a pod nginx-resolver-ckad03-svcn and expose it internally:
 
-student-node ~ ➜ kubectl run nginx-resolver-ckad03-svcn --image=nginx 
-student-node ~ ➜ kubectl expose pod/nginx-resolver-ckad03-svcn --name=nginx-resolver-service-ckad03-svcn --port=80 --target-port=80 --type=ClusterIP 
+student-node ~ ➜ ``` kubectl run nginx-resolver-ckad03-svcn --image=nginx 
+student-node ~ ➜ ``` kubectl expose pod/nginx-resolver-ckad03-svcn --name=nginx-resolver-service-ckad03-svcn --port=80 --target-port=80 --type=ClusterIP 
 
 ## Details
 
@@ -698,7 +698,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster2 by running:
 
-kubectl config use-context cluster2
+``` kubectl config use-context cluster2
 
 Create a Deployment named ckad13-deployment with "two replicas" of nginx image and expose it using a service named ckad13-service.
 
@@ -708,7 +708,7 @@ Create the service in the default namespace.
 
 ## Solution
 The following manifest can be used to create an deployment ckad13-deployment with nginx image and 2 replicas.
-apiVersion: apps/v1
+```  apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ckad13-deployment
@@ -730,7 +730,7 @@ spec:
 
 To access from outside the cluster, we use nodeport type of service.
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Service
 metadata:
   name: ckad13-service
@@ -759,7 +759,7 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 We have a sample CRD at /root/ckad10-crd-aecs.yaml which should have the following validations:
 
@@ -774,13 +774,13 @@ Update the file incorporating the above validations in a namespaced scope.
 Note: Remember to create the CRD after the required changes.
 
 ## Solution
-student-node ~ ➜  kubectl config use-context cluster1
+student-node ~ ➜  ``` kubectl config use-context cluster1
 Switched to context "cluster1".
 
 student-node ~ ➜  vim ckad10-crd-aecs.yaml 
 
 student-node ~ ➜  cat ckad10-crd-aecs.yaml 
-apiVersion: apiextensions.k8s.io/v1
+```  apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: holidaydestinations.destinations.k8s.io
@@ -857,7 +857,7 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster3 by running:
 
-kubectl config use-context cluster3
+``` kubectl config use-context cluster3
 
 Create a ClusterRole named healthz-access that allows GET and POST requests to the non-resource endpoint /healthz and all subpaths.
 
@@ -880,17 +880,17 @@ Is correct user specified for ClusterRoleBinding?
 Task
 
 ## Solution
-student-node ~ ➜  kubectl config use-context cluster1
+student-node ~ ➜  ``` kubectl config use-context cluster1
 Switched to context "cluster1".
 
-student-node ~ ➜  kubectl create configmap ckad03-config-aecs --from-literal=Exam=utlimate-mock-ckad --from-literal=Provider=kodekloud
+student-node ~ ➜  ``` kubectl create configmap ckad03-config-aecs --from-literal=Exam=utlimate-mock-ckad --from-literal=Provider=kodekloud
 configmap/ckad03-config-aecs created
 
 student-node ~ ➜  k get cm 
 ckad03-config-aecs  kube-root-ca.crt    
 
 student-node ~ ➜  k get cm ckad03-config-aecs -o yaml
-apiVersion: v1
+```  apiVersion: v1
 data:
   Exam: utlimate-mock-ckad
   Provider: kodekloud
@@ -912,7 +912,7 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Define a Kubernetes custom resource definition (CRD) for a new resource kind called Foo (plural form - foos) in the samplecontroller.example.com group.
 
@@ -950,7 +950,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Create a new pod with image nginx and name ckad-probe-aom and configure the pod with livenessProbe with command ls and set initialDelaySeconds to 5 .
 
@@ -959,11 +959,11 @@ TIP: - Make use of the imperative command to create the above pod.
 ## Solution
 Using imperative command
 
-kubectl run ckad-probe-aom --image=nginx  --dry-run=client -o yaml > ckad-probe-aom.yaml
+``` kubectl run ckad-probe-aom --image=nginx  --dry-run=client -o yaml > ckad-probe-aom.yaml
 
 Use the following YAML file update yaml with livenessProbe
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
@@ -987,7 +987,7 @@ status: {}
 
 To recreate the pod, run the command:
 
-kubectl create -f ckad-probe-aom.yaml
+``` kubectl create -f ckad-probe-aom.yaml
 
 ## Details
 
@@ -1004,13 +1004,13 @@ Task
 ## Solution
 Identify the containers name in kodekloud-logs-aom with
 
-kubectl get pods kodekloud-logs-aom -o json | jq '.spec.containers[].name'
+``` kubectl get pods kodekloud-logs-aom -o json | jq '.spec.containers[].name'
 "ckad-exam"
 "sidecar"
 
 Use following command to logs of sidecar container
 
-kubectl logs kodekloud-logs-aom -c sidecar > /root/ckad-exam.aom
+``` kubectl logs kodekloud-logs-aom -c sidecar > /root/ckad-exam.aom
 
 ## Details
 
@@ -1023,7 +1023,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Three pods hulk,thor and ironman were created on cluster1. Of the three pods, identify the following and copy them to below file,
 
@@ -1034,11 +1034,11 @@ copy them as Podname,Memorylimit to /root/pod-metrics file on student-node.
 ## Solution
 Use the following command to find the pod metrics
 
-kubectl top pods 
+``` kubectl top pods 
 
 Use below command to view the resource limits of pod .
 
-kubectl get pod hulk -o json | jq -r '.spec.containers[].resources.limits.memory'
+``` kubectl get pod hulk -o json | jq -r '.spec.containers[].resources.limits.memory'
 
 Write the content to/root/pod-metrics file.
 
@@ -1055,7 +1055,7 @@ SECTION: APPLICATION OBSERVABILITY AND MAINTENANCE
 
 For this question, please set the context to cluster1 by running:
 
-kubectl config use-context cluster1
+``` kubectl config use-context cluster1
 
 Update the newly created pod analytics-app with a readinessProbe using the given specifications.
 
@@ -1064,7 +1064,7 @@ Configure an HTTP readiness probe to the existing pod simple-webapp with path va
 ## Solution
 Use the following YAML file and create a file - for example, analytics-app.yaml:
 
-apiVersion: v1
+```  apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: "2021-08-01T04:55:35Z"
@@ -1090,7 +1090,7 @@ spec:
 
 To recreate the pod, run the command:
 
-kubectl replace -f analytics-app.yaml --force
+``` kubectl replace -f analytics-app.yaml --force
 
 ## Details
 
