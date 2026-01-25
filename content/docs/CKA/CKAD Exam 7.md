@@ -23,32 +23,42 @@ NOTE: delete and recreate readiness-multi-containers pod if needed!
 ## Solution
 First query the pod and see if it running or not:
 
-student-node ~ ➜  ``` kubectl get po -n ckad-multi-containers
+student-node ~ ➜  
+``` 
+kubectl get po -n ckad-multi-containers
+
 NAME                         READY   STATUS                  RESTARTS     AGE
 readiness-multi-containers   0/1     Init:CrashLoopBackOff   1 (6s ago)   9s
+
 ``` 
+
 You can see its status is Init:CrashLoopBackOff, which means something went wrong with the pod.
 
 Check the main container logs:
 
-``` kubectl logs readiness-multi-containers -n ckad-multi-containers 
+``` 
+kubectl logs readiness-multi-containers -n ckad-multi-containers 
+
 Error from server (BadRequest): container "main-application" in pod "readiness-multi-containers" is waiting to start: PodInitializing
+
 ``` 
 
 The main container can't be started as it waiting for the init container.
 
 Check the init container logs:
 
-student-node ~ ✖ ``` 
+ 
+``` 
 kubectl logs readiness-multi-containers -n ckad-multi-containers init-application
 sh: slept: not found
 ``` 
-``` 
+
+ 
 The issue here is slept command is not found (typo issue), you just need to update the command then the pod will start correctly.
 
 The command of init-container should look like below:
 
- ``` 
+``` 
 initContainers:
   - command:
     - sh
@@ -78,7 +88,8 @@ Main container should print this message The app is running! and then sleep for 
 ## Solution
 Use below YAML to create required pod:
 
-```  apiVersion: v1
+```  
+apiVersion: v1
 kind: Pod
 metadata:
   name: healthy-server
@@ -120,7 +131,9 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-``` kubectl config use-context cluster1``` 
+``` 
+kubectl config use-context cluster1
+``` 
 
 In the ckad-pod-design namespace, start a ckad-nginx-wiipwlznjy pod running the nginx:1.17 image; the container should be named nginx-custom-annotation.
 
@@ -129,9 +142,11 @@ Configure a custom annotation to that pod as below:
 HOMEPAGE: https://kodekloud.com/
 
 ## Solution
+
 Create a YAML file with the content as below:
 
-```  apiVersion: v1
+```  
+apiVersion: v1
 kind: Pod
 metadata:
   creationTimestamp: null
@@ -151,11 +166,16 @@ spec:
 status: {}
 ``` 
 
-Then use ``` kubectl apply -f file_name.yaml ```  to create the required object.
+Then use
+ ``` 
+kubectl apply -f file_name.yaml 
+```  to create the required object.
 
 Alternatively, you can use this command for similar outcome:
 
-``` kubectl run ckad-nginx-wiipwlznjy -n ckad-pod-design --image=nginx:1.17 --annotations HOMEPAGE=https://kodekloud.com ``` 
+``` 
+kubectl run ckad-nginx-wiipwlznjy -n ckad-pod-design --image=nginx:1.17 --annotations HOMEPAGE=https://kodekloud.com 
+``` 
 
 ## Details
 
@@ -172,7 +192,9 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster2 by running:
 
-``` kubectl config use-context cluster2``` 
+```
+ kubectl config use-context cluster2
+``` 
 
 In the ckad-job namespace, create a job named pi that simply computes a π (pi) to 2000 places and prints it out.
 
@@ -183,7 +205,8 @@ Use perl:5.34.0 image for your container.
 ## Solution
 Use below YAML to create job:
 
-```  apiVersion: batch/v1
+```  
+apiVersion: batch/v1
 kind: Job
 metadata:
   name: pi
@@ -202,9 +225,12 @@ spec:
 You can verify the output by running below command against the job's pod (noted that the pod name will be different):
 
 Identify pod name by this command:
-``` kubectl get pod -n ckad-job -l job-name=pi``` 
+``` 
+kubectl get pod -n ckad-job -l job-name=pi
+``` 
 
-``` kubectl logs pi-4zvcc -n ckad-job 
+``` 
+kubectl logs pi-4zvcc -n ckad-job 
 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481117450284102701938521105559644622948954930381964428810975665933446128475648233786783165271201909145648566923460348610454326648213393607260249141273724587006606315588174881520920962829254091715364367892590360011330530548820466521384146951941511609433057270365759591953092186117381932611793105118548074462379962749567351885752724891227938183011949129833673362440656643086021394946395224737190702179860943702770539217176293176752384674818467669405132000568127145263560827785771342757789609173637178721468440901224953430146549585371050792279689258923542019956112129021960864034418159813629774771309960518707211349999998372978049951059731732816096318595024459455346908302642522308253344685035261931188171010003137838752886587533208381420617177669147303598253490428755468731159562863882353787593751957781857780532171226806613001927876611195909216420198938095257201065485863279
 ``` 
 
@@ -227,7 +253,9 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-``` kubectl config use-context cluster2``` 
+``` 
+kubectl config use-context cluster2
+``` 
 
 The team Garuda has deployed one application in the testing-apd namespace. The testing was done, and the team wants you to delete that release. Find out the release name and delete it.
 
@@ -240,7 +268,9 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3``` 
+``` 
+kubectl config use-context cluster3
+``` 
 
 We have deployed two applications called circle-apd and square-apd on the default namespace using the kodekloud/webapp-color:v1 and kodekloud/webapp-color:v2.
 
@@ -249,6 +279,7 @@ We have done all the tests and do not want circle-apd deployment to receive traf
 Do change the service specifications to route traffic to the square-apd deployment.
 
 You can test the application from the terminal by running the curl command with the following syntax: -
+
 ``` 
 curl http://cluster3-controlplane:NODE-PORT
 <!doctype html>
@@ -261,29 +292,40 @@ curl http://cluster3-controlplane:NODE-PORT
 As shown above, we will get the Application Version: v2 in the output.
 
 ## Solution
+
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster3``` 
+``` kubectl config use-context cluster3
+``` 
 
-In this task, we will use the ``` kubectl command. Here are the steps: -
+In this task, we will use the 
+kubectl command. Here are the steps: -
 
-Use the ``` kubectl get command to list all the given resources: -
+Use the kubectl get command to list all the given resources: -
 
-``` kubectl get deploy,svc -n default ``` 
+``` 
+kubectl get deploy,svc -n default 
+
+``` 
 
 Identify the created deployment and service names.
 
 Now, check the label used in the service selector field for the deployment named circle-apd.
 
-``` kubectl describe service foundary-svc ``` 
+``` 
+kubectl describe service foundary-svc 
+``` 
 
 Check the labels for the deployment named square-apd deployment: -
 
-``` kubectl get deploy square-apd -oyaml ``` 
+``` 
+kubectl get deploy square-apd -oyaml 
+``` 
 
 Update the selector label of the service.
 
-``` kubectl edit service foundary-svc ``` 
+``` kubectl edit service foundary-svc
+ ``` 
 
 By default, it will open a VI editor. After updating the selector labels. Press ESC and type :wq. It will save the changes and quit the editor.
 
@@ -300,7 +342,8 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3 ``` 
+``` kubectl config use-context cluster3 
+``` 
 
 The deployment called foundary-apd inside the blue-apd namespace on cluster3 has undergone several, routine, rolling updates and rollbacks.
 
@@ -309,19 +352,26 @@ Inspect the revision 3 of this deployment and store the image name that was used
 ## Solution
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster3 ``` 
+``` kubectl config use-context cluster3 
+``` 
 
-In this task, we will use the ``` kubectl get and ``` kubectl rollout commands. Here are the steps: -
+In this task, we will use the kubectl get kubectl rollout commands. Here are the steps: -
 
 To check the deployment under the blue-apd namespace, run the following command: -
-``` kubectl get deploy -n blue-apd
+
+``` 
+kubectl get deploy -n blue-apd
+ ```
 
 In the task, we have been given to check the revisions. For this, we use the 
-``` kubectl rollout history 
+``` 
+kubectl rollout history 
 ``` 
  command to view the revision history of the deployment called foundary-apd. Run the following command: -
 
-``` kubectl rollout history deployment -n blue-apd foundary-apd  ``` 
+``` 
+kubectl rollout history deployment -n blue-apd foundary-apd  
+``` 
 
 We will see all the revisions of the given deployment.
 
@@ -329,6 +379,7 @@ Now, inspect the revision 3 by using the --revision option: -
 
 ``` 
 kubectl rollout history deployment -n blue-apd foundary-apd --revision=3 
+
 ``` 
 
 Under the Containers section, we will see the image name.

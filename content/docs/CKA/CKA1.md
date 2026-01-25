@@ -35,6 +35,7 @@ SSH into the cluster1-controlplane host
 ssh cluster1-controlplane
 
 Create a yaml file as below:
+
 ```
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
@@ -82,6 +83,7 @@ spec:
 ```
 
 Apply the template:
+
 ```
 kubectl apply -f <template-file-name>.yaml
 ```
@@ -122,6 +124,7 @@ Note that your results may differ from the example provided.
 
 
 ##  Task SECTION: WORKLOADS & SCHEDULING
+
 Solve this question on: ssh cluster4-controlplane
 Create a PriorityClass named high-priority with a value of 1000000. A deployment named hp-webapp is in the namespace high-priority. Modify the deployment to use the priority class you created.
 
@@ -129,7 +132,9 @@ Solution
 
 SSH into the cluster4-controlplane host
 
-```ssh cluster4-controlplane```
+```
+ssh cluster4-controlplane
+```
 
 
 Create a PriorityClass named high-priority with a value of 1000000 by applying the manifest provided below:
@@ -154,7 +159,9 @@ priorityClassName: high-priority
 
 Verify that the hp-webapp deployment is using the correct PriorityClass by running:
 
-``` kubectl get deployment hp-webapp -n high-priority -o yaml | grep priorityClassName```dotnetcli
+``` 
+kubectl get deployment hp-webapp -n high-priority -o yaml | grep priorityClassName
+``` 
 
 ## Task SECTION: CLUSTER ARCHITECTURE, INSTALLATION & CONFIGURATION
 
@@ -168,6 +175,7 @@ Use the helm command to validate and install the chart. After successfully insta
 
 Solution
 SSH into the cluster1-controlplane host
+
 ssh cluster1-controlplane
 
 
@@ -175,25 +183,32 @@ In this task, we will use the helm commands. Here are the steps: -
 
 Use the helm ls command to list the release deployed on the default namespace using helm.
 
+```
 helm ls -n default
+```
 
 First, validate the helm chart by using the helm lint command: -
 
+```
 cd /root/
 
 helm lint ./new-version
+```
 
 Now, install the new version of the application by using the helm install command as follows: -
 
+```
 helm install --generate-name ./new-version --namespace default
-
+```
 
 We haven't got any release name in the task, so we can generate the random name from the --generate-name option.
 
 Finally, uninstall the old version of the application by using the helm uninstall command: -
 
+```
 helm uninstall webpage-server-01 -n default
 
+```
 
 ## Task SECTION: WORKLOADS & SCHEDULING
 
@@ -206,12 +221,15 @@ NOTE: A ResourceQuota named cpu-mem-quota is applied to the default namespace an
 Solution
 
 SSH into the cluster3-controlplane host
+
 ssh cluster3-controlplane
 
 1. Check Deployment Status
 Verify the current status of the deployment:
 
+```
 kubectl get deploy
+```
 
 Expected output (shows that only 2 out of 3 pods are running):
 
@@ -224,7 +242,9 @@ The third pod is not getting scheduled.
  
 Describe the ReplicaSet to check why the third pod is not being created:
 
+```
 kubectl describe replicasets backend-api-7977bfdbd5
+```
 
 The issue is due to ResourceQuota limitations.
 
@@ -239,9 +259,13 @@ requested: requests.memory=128Mi, used: requests.memory=256Mi, limited: requests
 
 Edit the deployment and reduce memory requests:
 
-```kubectl edit deployment backend-api -n default```
+```
+kubectl edit deployment backend-api -n default
+
+```
 
 Modify the resources section:
+
 ```
 resources:
   requests:
@@ -253,10 +277,13 @@ resources:
 ```
 
 4. Verify the Pods (Still Only 2 Running)
+
 1. 
 Check if the new pod is scheduled:
 
-```kubectl get pods -n default``
+```
+kubectl get pods -n default
+```
 
 If the third pod is still missing, the old ReplicaSet might be preventing it.
 
@@ -264,7 +291,9 @@ If the third pod is still missing, the old ReplicaSet might be preventing it.
 
 Find the old ReplicaSet:
 
-``` kubectl get rs -n default```
+``` 
+kubectl get rs -n default
+```
 
 Delete the outdated ReplicaSet:
 
@@ -287,12 +316,14 @@ Are the limits unchanged?
 Is the ResourceQuota unchanged?
 
 ### Task SECTION: WORKLOADS & SCHEDULING
+
 Solve this question on: ssh cluster1-controlplane
 
 Deploy a Vertical Pod Autoscaler (VPA) named analytics-vpa for a deployment named analytics-deployment in the cka24456 namespace. The VPA should automatically adjust the CPU and memory requests of the pods to optimize resource utilization. Ensure that the VPA operates in Auto mode, allowing it to evict and recreate pods with updated resource requests as needed.
 
 Solution
 SSH into the cluster1-controlplane host
+
 ssh cluster1-controlplane
 
 Next, to enable Vertical Pod Autoscaler (VPA) on the analytics-deployment within the cka24456 namespace, utilize the manifest file provided below.
@@ -324,7 +355,9 @@ Is the VPA mode configured to "Auto"?
 
 A pod called pink-pod-cka16-trb is created in the default namespace in cluster4. This app runs on port tcp/5000, and it is to be exposed to end-users using an ingress resource called pink-ing-cka16-trb such that it becomes accessible using the command curl http://kodekloud-pink.app on the cluster4-controlplane host. There is an ingress.yaml file under the root folder in cluster4-controlplane. Create an ingress resource by following the command and continue with the task.
 
-``` kubectl create -f ingress.yaml```
+```
+ kubectl create -f ingress.yaml
+```
 
 However, even after creating the ingress resource, it is not working. Troubleshoot and fix this issue, making any necessary changes to the objects.
 
@@ -332,21 +365,29 @@ Solution
 
 create ingress with the given yaml file ingress.yaml
 
-``` kubectl create -f ingress.yaml```
+``` 
+kubectl create -f ingress.yam
+l```
 
 Now try to access the app.
 
-``` curl kodekloud-pink.app```
+``` 
+curl kodekloud-pink.app
+```
 
 You must be getting 503 Service Temporarily Unavailable error.
 Let's look into the service:
 
-```kubectl edit svc pink-svc-cka16-trb```
+```
+kubectl edit svc pink-svc-cka16-trb
+```
 
 Under ports: change protocol: UDP to protocol: TCP
 Try to access the app again
 
-```curl kodekloud-pink.app```
+```
+curl kodekloud-pink.app
+```
 
 It should work now.
 
@@ -362,13 +403,22 @@ A pod named beta-pod-cka01-arch has been created in the beta-cka01-arch namespac
 Solution
 
 SSH into the cluster1-controlplane host
+```
 ssh cluster1-controlplane
+```
 
 Run the below commands:
 
-cluster1-controlplane ~ ➜  kubectl -n beta-cka01-arch logs beta-pod-cka01-arch | grep ERROR > /root/beta-pod-cka01-arch_errors
+cluster1-controlplane ~ ➜  
 
-cluster1-controlplane ~ ➜  head /root/beta-pod-cka01-arch_errors
+``` kubectl -n beta-cka01-arch logs beta-pod-cka01-arch | grep ERROR > /root/beta-pod-cka01-arch_errors
+```
+
+
+cluster1-controlplane ~ ➜ 
+
+```
+ head /root/beta-pod-cka01-arch_errors
 ERROR: Wed Mar 26 11:54:15 UTC 2025 Logger encountered errors!
 ERROR: Wed Mar 26 11:54:15 UTC 2025 Logger encountered errors!
 ERROR: Wed Mar 26 11:54:15 UTC 2025 Logger encountered errors!
@@ -379,6 +429,7 @@ ERROR: Wed Mar 26 11:54:15 UTC 2025 Logger encountered errors!
 ERROR: Wed Mar 26 11:54:15 UTC 2025 Logger encountered errors!
 ERROR: Wed Mar 26 11:54:15 UTC 2025 Logger encountered errors!
 ERROR: Wed Mar 26 11:54:15 UTC 2025 Logger encountered errors!
+````
 
 Details
 

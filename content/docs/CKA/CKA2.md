@@ -40,6 +40,7 @@ kubectl get pod nginx-wl06 -o yaml > nginx-fixed.yaml
 This command will save the pod's YAML definition for future modifications.
 
 Edit the YAML File
+
 Open the YAML file for editing with the following command:
 
 vi nginx-fixed.yaml
@@ -52,6 +53,7 @@ Delete the stuck pod by executing:
 kubectl delete pod nginx-wl06
 
 Recreate the Pod
+
 Recreate the pod using the corrected YAML file with this command:
 
 kubectl apply -f nginx-fixed.yaml

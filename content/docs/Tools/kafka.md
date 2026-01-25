@@ -16,7 +16,9 @@ Growing applications often begin with a simple, direct communication model betwe
 To illustrate these challenges, consider a typical e-commerce application, "Stream Store," built with microservices for orders, payments, inventory, and notifications. In a tightly-coupled model, these services call each other directly. When a customer places an order, the order service might directly call the payment service and wait for a response before proceeding. While functional at a small scale, this design crumbles under pressure, exposing several critical flaws.
 
 * Cascading Failures: The system's stability is only as strong as its weakest link. A direct dependency means that if the payment service crashes or becomes unresponsive, the entire order process freezes. The order service is stuck waiting for a response that will never arrive, causing a disruption that cascades through the entire application.
+
 * Performance Bottlenecks: Synchronous communication creates a chain reaction of dependencies. If one service, such as the payment gateway, becomes slow or overloaded, it forces upstream services to wait. The order service hangs, which in turn makes the front-end service hang. A single overloaded component degrades the performance of the entire system, creating a poor user experience.
+
 * Data Loss During Outages: During periods of high traffic, such as a "Black Friday sale," the system is most vulnerable. When the architecture fails under load, not only are transactions lost, but so is valuable analytics data. Events that should update sales dashboards or feed into real-time business intelligence are dropped, leaving the business blind during its most critical moments.
 
 These issues demonstrate that an architecture based on direct, synchronous calls is fundamentally brittle. To achieve true resilience and scale, a fundamentally different approach to inter-service communication is required.
@@ -85,8 +87,10 @@ Stage 1: Deploying the Kafka Broker
 
 The foundation is the broker itself, which can be deployed as a Docker container. What's essential to grasp here is not just the container setup, but the strategic configuration choices within it. Beyond defining bootstrap.servers and advertised.listeners for basic connectivity, an architect must pay close attention to several key KRaft environment variables:
 
-* KAFKA_PROCESS_ROLES: Setting this to broker,controller allows a single node to perform both roles. This simplifies the topology for development, but in a production environment, these roles are often separated for better resource management and resilience.
-* KAFKA_CONTROLLER_QUORUM_VOTERS: This setting defines which nodes participate in cluster consensus. Even though a demo uses a single node, this variable is the foundation of high availability, as it would list multiple controller nodes in a production cluster.
+* KAFKA_PROCESS_ROLES: Setting this to broker,controller allows a single node to perform both roles. This simplifies the topology for development, but in a production environment, these roles are often separated for better resource management and resilience. 
+
+* KAFKA_CONTROLLER_QUORUM_VOTERS: This setting defines which nodes participate in cluster consensus. Even though a demo uses a single node, this variable is the foundation of high availability, as it would list multiple controller nodes in a production cluster. 
+
 * KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1: This is a deliberate, non-production choice. A common architectural pitfall this avoids in a demo is a startup failure, as the default is 3. Setting this to 1 is required for a single-broker setup but represents a single point of failure. In production, a value of 3 or higher is non-negotiable to ensure the metadata that tracks consumer progress is not lost if a broker fails.
 
 Stage 2: Building the Event Producer
@@ -106,7 +110,9 @@ The journey from a tightly-coupled, synchronous architecture to a decoupled, eve
 The adoption of Kafka delivers clear and compelling value across both technical and business domains:
 
 * System Resilience and Fault Tolerance: The cascading failures described in the "Stream Store" example are eliminated because services are fully decoupled. The crash of a payment consumer has zero immediate impact on the order producer. Kafka's persistent log ensures events are safely stored and can be processed when services recover.
+
 * Massive Scalability and High Performance: The performance bottlenecks caused by a single slow service are solved. Partitions and consumer groups allow throughput to scale horizontally, ensuring that a Black Friday sales surge can be handled by adding resources, not by redesigning the system.
+
 * Enablement of Real-Time Data Analytics and Event-Driven Workflows: Kafka unlocks the ability to build sophisticated, real-time systems. A single stream of events can feed multiple applications simultaneously, from operational microservices to live analytics dashboards and complex event processing engines.
 
 Ultimately, choosing Apache Kafka is more than a technology choice; it is a strategic architectural decision. It provides the foundation for building robust, scalable, and adaptable applications capable of meeting the demands of modern, data-intensive environments and positioning an organization for future growth and innovation.
