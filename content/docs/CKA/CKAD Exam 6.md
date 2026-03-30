@@ -11,7 +11,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-``` kubectl config use-context cluster1
+``` kubectl config use-context cluster1 ```
 
 Create a persistent volume called data-pv-ckad02-str with the below properties:
 
@@ -38,6 +38,7 @@ spec:
   hostPath:
     path: /opt/data-pv-ckad02-str
   storageClassName: manual
+```
 
 ---
 
@@ -54,6 +55,7 @@ spec:
     requests:
       storage: 50Mi
 
+```
 ## Details
 
 Is data-pv-ckad02-str PV capacity is '128Mi'?
@@ -71,7 +73,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-``` kubectl config use-context cluster1
+``` kubectl config use-context cluster1 ```
 
 In the ckad-job namespace, create a cron job called my-alarm that prints current datetime. It must be scheduled to run every Sunday at midnight.
 
@@ -107,6 +109,7 @@ spec:
             - date;
           restartPolicy: OnFailure
 
+```
 ## Details
 
 Is cronjob my-alarm created?
@@ -125,7 +128,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster1 by running:
 
-``` kubectl config use-context cluster1
+``` kubectl config use-context cluster1 ```
 
 In the ckad-pod-design namespace, start a ckad-httpd-fzkkvrwgms pod runs nginx:1.17 image; the container should be named nginx-custom-environment.
 
@@ -156,11 +159,12 @@ spec:
   restartPolicy: Always
 status: {}
 
-Then use ``` kubectl apply -f file_name.yaml to create the required object.
+```
+Then use kubectl apply -f file_name.yaml to create the required object.
 
 Alternatively, you can use this command for similar outcome:
 
-``` kubectl run ckad-httpd-fzkkvrwgms -n ckad-pod-design --image=nginx:1.17 --env EXAM=CKAD
+``` kubectl run ckad-httpd-fzkkvrwgms -n ckad-pod-design --image=nginx:1.17 --env EXAM=CKAD ```
 
 ## Details
 
@@ -177,7 +181,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster2 by running:
 
-``` kubectl config use-context cluster2
+``` kubectl config use-context cluster2 ```
 
 In the ckad-pod-design namespace, create a pod named security-context-pod that runs the redis image, and the container should be run in privileged mode.
 
@@ -203,9 +207,10 @@ spec:
   restartPolicy: Always
 status: {}
 
-Or in short, use this ``` kubectl command for the same output:
+```
+Or in short, use this kubectl command for the same output:
 
-``` kubectl run security-context-pod --image=redis --privileged=true -n ckad-pod-design
+``` kubectl run security-context-pod --image=redis --privileged=true -n ckad-pod-design ```
 
 ## Details
 
@@ -222,7 +227,7 @@ SECTION: APPLICATION DESIGN AND BUILD
 
 For this question, please set the context to cluster2 by running:
 
-``` kubectl config use-context cluster2
+``` kubectl config use-context cluster2 ```
 
 In the ckad-multi-containers namespace, create a pod named static-web-server, which consists of 2 containers. One main container and one init-container both are running alpine image.
 
@@ -256,6 +261,8 @@ spec:
         - -c
         - echo Getting main application ready! && sleep 10
 
+```
+
 ## Details
 
 Is the static-web-server running?
@@ -275,7 +282,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 Our new client wants to deploy the resources through the popular Helm tool. In the initial phase, our team lead wants to deploy nginx, a very powerful and versatile web server software that is widely used to serve static content, reverse proxying, load balancing, from the bitnami helm chart on the cluster3-controlplane node.
 
@@ -294,29 +301,29 @@ NOTE: - You have to perform this task from the student-node.
 ## Solution
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 In this task, we will use the helm commands. Here are the steps: -
 
 Add the repostiory to Helm with the following command: -
 
-helm repo add polar https://charts.bitnami.com/bitnami
+``` helm repo add polar https://charts.bitnami.com/bitnami ```
 
 The helm repo add command is used to add a new chart repository to Helm and this allows us to browse and install charts from the new repository using the Helm package manager.
 
 Use the helm repo ls command which is used to list all the currently configured Helm chart repositories on Kubernetes cluster.
 
-helm repo ls 
+``` helm repo ls  ```
 
 Search for the nginx chart in a polar chart repository as follows: -
 
-helm search repo polar | grep nginx
+``` helm search repo polar | grep nginx ```
 
 The helm search repo command is used to search for charts in a specified Helm chart repository. Also, it allows us to browse available charts and view their ## Details, such as their name, version, description, and maintainers.
 
 Before installing the chart, we have to create a namespace as given in the task description. Then we can install the nginx chart on a Kubernetes cluster.
 
-``` kubectl create ns cd-tool-apd
+``` kubectl create ns cd-tool-apd ```
 
 helm install nginx-server polar/nginx -n cd-tool-apd
 
@@ -334,7 +341,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 One of the Kubernetes developers from the team has deployed a test application named test-v1-apd to implement the blue/green deployment methodology. 
 
@@ -357,21 +364,21 @@ curl http://cluster3-controlplane:NODE-PORT
 ## Solution
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 In this task, we will use the ``` kubectl command. Here are the steps: -
 
-Use the ``` kubectl get command to list all the given resources: -
+Use the kubectl get command to list all the given resources: -
 
-``` kubectl get deploy,svc -A
+``` kubectl get deploy,svc -A ```
 
 Here -A option lists the resources of all the namespaces.
 
 Identify the deployment and service names.
 
-Now, use the ``` kubectl create command to create a deployment manifest file as follows: -
+Now, use the  kubectl create command to create a deployment manifest file as follows: -
 
-``` kubectl create deploy test-v2-apd --image=kodekloud/webapp-color:v2 --dry-run=client -oyaml > <FILE-NAME-1>.yaml
+``` kubectl create deploy test-v2-apd --image=kodekloud/webapp-color:v2 --dry-run=client -oyaml > <FILE-NAME-1>.yaml ```
 
 Open the file with any text editor such as vi or nano and update it as per the specifications. Check the labels for the pod template from the service. It should look like this: -
 
@@ -396,13 +403,15 @@ spec:
       - image: kodekloud/webapp-color:v2
         name: test-v2
 
+```
+
 We got the instructions not to modify the test-v1-apd deployment, we must add the replica count to 3 for the test-v2-apd deployment. So we will deploy a total of 6 application pods for both deployments.
 
 Since the service distributes traffic to all pods equally, we have to set the replica count 3 to the test-v2-apd deployment so that the given service will send 50% traffic to the deployment pods.
 
-Now, create a deployment by using the ``` kubectl create -f command: -
+Now, create a deployment by using the kubectl create -f command: -
 
-``` kubectl create -f <FILE-NAME-1>.yaml
+``` kubectl create -f <FILE-NAME-1>.yaml ```
 
 ## Details
 
@@ -419,28 +428,28 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster2 by running:
 
-``` kubectl config use-context cluster2
+``` kubectl config use-context cluster2 ```
 
 On the cluster2, the team has installed multiple helm charts on a different namespace. By mistake, those deployed resources include one of the vulnerable images called kodekloud/webapp-color:v1. Find out the release name and uninstall it.
 
 ## Solution
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster2
+``` kubectl config use-context cluster2 ```
 
 In this task, we will use the helm commands and jq tool. Here are the steps: -
 
 Run the helm ls command with -A option to list the releases deployed on all the namespaces using helm.
-helm ls -A
+``` helm ls -A ```
 
 We will use the jq tool to extract the image name from the deployments.
-``` kubectl get deploy -n <NAMESPACE> <DEPLOYMENT-NAME> -o json | jq -r '.spec.template.spec.containers[].image'
+``` kubectl get deploy -n <NAMESPACE> <DEPLOYMENT-NAME> -o json | jq -r '.spec.template.spec.containers[].image' ```
 
 Replace <NAMESPACE> with the namespace and <DEPLOYMENT-NAME> with the deployment name, which we get from the previous commands.
 
 After finding the kodekloud/webapp-color:v1 image, use the helm uninstall to remove the deployed chart that are using this vulnerable image.
 
-helm uninstall <RELEASE-NAME> -n <NAMESPACE> 
+``` helm uninstall <RELEASE-NAME> -n <NAMESPACE>  ```
 
 ## Details
 
@@ -451,13 +460,13 @@ Task
 ## Solution
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
-In this task, we will use the ``` kubectl command. Here are the steps: -
+In this task, we will use the kubectl command. Here are the steps: -
 
 Use the ``` kubectl get command to list all the given resources: -
 
-``` kubectl get po,deploy,sa,ns -n production
+``` kubectl get po,deploy,sa,ns -n production ```
 
 Here -n option stands for namespace, which is used to specify the namespace.
 
@@ -465,13 +474,13 @@ The above command will list all the resources from the production namespace.
 
 Inspect the service account is used by the pods/deployment.
 
-``` kubectl get deploy -n production webserver-deployment -oyaml
+``` kubectl get deploy -n production webserver-deployment -oyaml ```
 
 The deployment is using the default service account.
 
 Now, use the ``` kubectl get command to retrieves the YAML definition of a deployment named webserver-deployment and save it into a file.
 
-``` kubectl get deploy -n production webserver-deployment -o yaml > <FILE-NAME>.yaml
+``` kubectl get deploy -n production webserver-deployment -o yaml > <FILE-NAME>.yaml ```
 
 Open a VI editor. Make the necessary changes and save it. It should look like this: -
 
@@ -499,10 +508,11 @@ spec:
         imagePullPolicy: Always
         name: robox-container
       serviceAccountName: service-account-galaxy
+```
 
 Now, replace the resource with the following command:
 
-``` kubectl replace -f <FILE-NAME>.yaml --force
+``` kubectl replace -f <FILE-NAME>.yaml --force ```
 
 The above command will delete the existing deployment and create a new one with changes in the given namespace.
 
@@ -515,7 +525,7 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 On cluster3, we are getting alerts for the resource consumption for the ckad10-staging namespace. A limit is set for the ckad10-staging namespace; if the limit is crossed, we will get the alerts.
 
@@ -526,13 +536,13 @@ The team wants you to decrease the deployment to 4.
 ## Solution
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 In this task, we will use the ``` kubectl command. Here are the steps: -
 
 Use the ``` kubectl get command to list the pods and deployment on the ckad10-staging namespace.
 
-``` kubectl get pods,deployment -n ckad10-staging
+``` kubectl get pods,deployment -n ckad10-staging ```
 
 Here -n option stands for namespace, which is used to specify the namespace.
 
@@ -540,7 +550,7 @@ Inspect the deployed resources and count the number of pods.
 
 Now, scaled down the deployment to 4 as follows:
 
-``` kubectl scale deployment ultra-deployment -n ckad10-staging --replicas=4
+``` kubectl scale deployment ultra-deployment -n ckad10-staging --replicas=4 ```
 
 The above command will scale down the number of replicas in a deployment.
 
@@ -557,7 +567,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 Please use the namespace nginx-depl-svcn for the following scenario.
 
@@ -570,9 +580,11 @@ Apply the label app=nginx-ckad to the Service as well.
 Create and apply a NetworkPolicy named netpol-ckad-allow-svcn that allows ingress traffic only from Pods labeled criteria=allow to the Pods labeled app=nginx-ckad.
 
 ## Solution
+
+```
 Apply the Deployment:
-cat <<EOF | ``` kubectl apply -f -
-```  apiVersion: apps/v1
+cat <<EOF | kubectl apply -f -
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-ckad10-svcn
@@ -594,9 +606,13 @@ spec:
         image: nginx
 EOF
 
+```
+
 Apply the Service:
-cat <<EOF | ``` kubectl apply -f -
-```  apiVersion: v1
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
 kind: Service
 metadata:
   name: nginx-ckad10-service-svcn
@@ -612,9 +628,12 @@ spec:
     targetPort: 80
 EOF
 
+```
 Apply the NetworkPolicy:
-cat <<EOF | ``` kubectl apply -f -
-```  apiVersion: networking.k8s.io/v1
+
+```
+cat <<EOF | kubectl apply -f -
+ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: netpol-ckad-allow-svcn
@@ -632,6 +651,7 @@ spec:
   - Ingress
 EOF
 
+```
 ## Details
 
 Is deployment with nginx image created?
@@ -656,7 +676,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3
+``` kubectl config use-context cluster3 ```
 
 We have deployed an application in the ns-new-ckad namespace. We also configured services, namely frontend-ckad-svcn and backend-ckad-svcn.
 
@@ -673,19 +693,24 @@ Note: You can modify the resources.
 ## Solution
 backend-ckad-svcn is not able to access backend pods
 To troubleshoot it check the label selector of the service.
-``` kubectl -n ns-new-ckad describe svc backend-ckad-svcn 
+
+``` 
+kubectl -n ns-new-ckad describe svc backend-ckad-svcn 
 Name:              backend-ckad-svcn
 Namespace:         ns-new-ckad
 Labels:            app=backend
                    tier=ckad-exam
 Annotations:       <none>
 Selector:          app=back-end,tier=ckadexam
-----
+ 
 
-`
+```
 
 The labels used are not matching to the pod labels.
-Change them using ``` kubectl -n ns-new-ckad edit svc backend-ckad-svcn.
+Change them using 
+
+``` 
+kubectl -n ns-new-ckad edit svc backend-ckad-svcn.
     protocol: TCP
     targetPort: 80
   selector:
@@ -696,10 +721,14 @@ Change them using ``` kubectl -n ns-new-ckad edit svc backend-ckad-svcn.
 status:
   loadBalancer: {}
 
-Perform the connectivity test using ``` kubectl -n ns-new-ckad exec testpod -- curl backend-ckad-svcn.
+```
+Perform the connectivity test using kubectl -n ns-new-ckad exec testpod -- curl backend-ckad-svcn.
 frontend-ckad-svcn is not accessible from backend pods
 See if there are any Network policies restricting the traffic.
-Edit the policy using ``` kubectl -n ns-new-ckad edit netpol backend-egress-restricted.
+Edit the policy using 
+
+
+``` kubectl -n ns-new-ckad edit netpol backend-egress-restricted.
   namespace: ns-new-ckad
   resourceVersion: "4834"
   uid: a123fb01-4c83-4f3d-aa4e-55578589b654
@@ -718,7 +747,7 @@ spec:
   policyTypes:
   - Egress
 
-`
+```
 
 ## Details
 
@@ -732,7 +761,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster1 by running:
 
-``` kubectl config use-context cluster1
+``` kubectl config use-context cluster1 ```
 
 Deploy a pod with name messaging-ckad04-svcn using the redis:alpine image with the label tier=msg.
 
@@ -741,11 +770,11 @@ Now, Create a service messaging-service-ckad04-svcn to expose the pod messaging-
 ## Solution
 Switch to cluster1 :
 
-``` kubectl config use-context cluster1
+``` kubectl config use-context cluster1 ```
 
-On student-node, use the command ``` kubectl run messaging-ckad04-svcn --image=redis:alpine -l tier=msg
+On student-node, use the command ``` kubectl run messaging-ckad04-svcn --image=redis:alpine -l tier=msg ```
 
-Now run the command: ``` kubectl expose pod messaging-ckad04-svcn --port=6379 --name messaging-service-ckad04-svcn.
+Now run the command: ``` kubectl expose pod messaging-ckad04-svcn --port=6379 --name messaging-service-ckad04-svcn.```
 
 ## Details
 
@@ -756,7 +785,7 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster2 by running:
 
-``` kubectl config use-context cluster2
+``` kubectl config use-context cluster2 ```
 
 This scenario is categorized into two parts. Please find them below.
 
@@ -778,7 +807,7 @@ pod-2           ip-3
 ## Solution
 Switching to cluster2:
 
-``` kubectl config use-context cluster2
+``` kubectl config use-context cluster2 ```
 
 The easiest way to route traffic to a specific pod is by the use of labels and selectors . List the pods along with their labels:
 

@@ -717,23 +717,26 @@ Task
 SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 For this question, please set the context to cluster1 by running:
 ```
-kubectl config use-context cluster1```
+kubectl config use-context cluster1
+```
 
 Create a pod named ckad17-qos-aecs-3 in namespace ckad17-nqoss-aecs with image nginx and container name ckad17-qos-ctr-3-aecs.
 
 Define other fields such that the Pod is configured to use the Quality of Service (QoS) class of Burstable.
 
 Also retrieve the name and QoS class of each Pod in the namespace ckad17-nqoss-aecs in the below format and save the output to a file named qos_status_aecs in the /root directory.
-```
+
 Format:
 
 NAME    QOS
 pod-1   qos_class
 pod-2   qos_class
-```
+
 ## Solution
 ```
-student-node ~ ➜ kubectl config use-context cluster1
+student-node ~ ➜ 
+
+kubectl config use-context cluster1
 Switched to context "cluster1".
 
 student-node ~ ➜  cat << EOF | kubectl apply -f -
@@ -776,7 +779,8 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster2 by running:
 ```
-kubectl config use-context cluster2 ```
+kubectl config use-context cluster2 
+```
 
 Create a custom resource my-anime of kind Anime with the below specifications:
 
@@ -786,6 +790,7 @@ Episode Count: 37
 TIP: You may find the respective CRD with anime substring in it.
 
 ## Solution
+
 ```
 student-node ~ ➜  kubectl config use-context cluster2
 Switched to context "cluster2".
@@ -846,15 +851,25 @@ Create a ConfigMap named ckad04-config-multi-env-files-aecs in the default names
 ## Solution
 
 ```
-student-node ~ ➜  kubectl config use-context cluster1
-Switched to context "cluster1".
-
-student-node ~ ➜  kubectl create configmap ckad04-config-multi-env-files-aecs \
+ 
+ kubectl config use-context cluster1
+ 
+```
+ 
+``` 
+kubectl create configmap ckad04-config-multi-env-files-aecs \
          --from-env-file=/root/ckad04-multi-cm/file1.properties \
          --from-env-file=/root/ckad04-multi-cm/file2.properties
+```
 configmap/ckad04-config-multi-env-files-aecs created
 
-student-node ~ ➜  k get cm ckad04-config-multi-env-files-aecs -o yaml
+ 
+
+```
+k get cm ckad04-config-multi-env-files-aecs -o yaml
+```
+
+```
 apiVersion: v1
 data:
   allowed: "true"

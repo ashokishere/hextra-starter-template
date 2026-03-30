@@ -463,43 +463,61 @@ After upgrading the image version, to increase the availability and performance 
 You can SSH into the cluster3 using ssh cluster3-controlplane command.
 
 ## Solution
+
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster3 ``` 
+``` 
+kubectl config use-context cluster3 
+``` 
 
-In this task, we will use the ``` kubectl describe, ``` kubectl get, ``` kubectl set and ``` kubectl scale commands. Here are the steps: -
+In this task, we will use the  kubectl describe,  kubectl get, kubectl set and  kubectl scale commands. Here are the steps: -
 
 To check all the deployments in all the namespaces in the cluster3, we would have to run the following command:
-``` kubectl get deployments -A ``` 
+
+``` 
+kubectl get deployments -A 
+``` 
 
 Inspect all the deployments.
 
-We can see that one of the deployment's names is shipping-api and deployed on ckad9-uat namespace. Use the ``` kubectl describe command to get detailed information of that deployment: -
-``` kubectl describe -n ckad9-uat deploy shipping-api ``` 
+We can see that one of the deployment's names is shipping-api and deployed on ckad9-uat namespace. Use the kubectl describe command to get detailed information of that deployment: -
 
-The output of the ``` kubectl describe ```  command will provide you with a detailed description of the deployment, including its name, namespace, creation time, labels, replicas, and the Docker image being used.
+``` 
+kubectl describe -n ckad9-uat deploy shipping-api 
+``` 
 
-In the previous command, we can see the container and image name under the Pod Template spec. Use the ``` kubectl set command ```  to update the image of that container as follows:
-``` kubectl set image -n ckad9-uat deploy shipping-api shipping-api=nginx:perl ``` 
+The output of the   kubectl describe  command will provide you with a detailed description of the deployment, including its name, namespace, creation time, labels, replicas, and the Docker image being used.
+
+In the previous command, we can see the container and image name under the Pod Template spec. Use the   kubectl set command  to update the image of that container as follows:
+
+``` 
+kubectl set image -n ckad9-uat deploy shipping-api shipping-api=nginx:perl 
+``` 
 
 After running the above command, Kubernetes will automatically update the shipping-api container with the new image, and create a new replica of the resource with the updated image.
 The old replica will be deleted once the new one is up and running.
 
 Now, SSH to the cluster3-controlplane node and use echo command to add this new image to a file at /root/records/new-image-records.txt: -
-``` 
+
+```
 echo "nginx:perl" > /root/records/new-image-records.txt
-``` 
+```
 
 If the records directory is absent, use the mkdir command to create this directory.
 
 NOTE: - To exit from any node, type exit on the terminal or press CTRL + D.
 
-Now, run the ``` kubectl scale command ```  to scale the deployment to 2:
-``` kubectl scale deployment -n ckad9-uat shipping-api --replicas=2 ``` 
+Now, run the  kubectl scale command  to scale the deployment to 2:
 
-Cross-verify the scaled deployment by using the ``` kubectl get command:
+``` 
+kubectl scale deployment -n ckad9-uat shipping-api --replicas=2 
+``` 
 
-``` kubectl get deployments,pods -n ckad9-uat ``` 
+Cross-verify the scaled deployment by using the  kubectl get command:
+
+``` 
+kubectl get deployments,pods -n ckad9-uat
+ ``` 
 
 ## Details
 
@@ -516,7 +534,9 @@ SECTION: APPLICATION DEPLOYMENT
 
 For this question, please set the context to cluster1 by running:
 
-``` kubectl config use-context cluster1 ``` 
+``` 
+kubectl config use-context cluster1 
+``` 
 
 One co-worker deployed an nginx helm chart on the cluster1 server called bitnami. A new update is pushed to the helm chart, and the team wants you to update the helm repository to fetch the new changes.
 
@@ -529,21 +549,28 @@ You can SSH into the cluster1 using ssh cluster1-controlplane command.
 ## Solution
 Run the following command to change the context: -
 
-``` kubectl config use-context cluster1 ``` 
+``` 
+kubectl config use-context cluster1 
+``` 
 
 In this task, we will use the  kubectl and helm commands. Here are the steps: -
 
-Log in to the cluster1-controlplane node first and use the helm ls command to list all the releases installed using Helm in the Kubernetes cluster.
+Log in to the cluster1-controlplane node first and use the helm ls command to list all the releases installed 
+using Helm in the Kubernetes cluster.
 
 ``` 
 helm ls -A
+```
 
 Here -A or --all-namespaces option lists all the releases of all the namespaces.
 
 Identify the namespace where the resources get deployed.
 
 Use the helm repo ls command to list the helm repositories.
+
+```
 helm repo ls 
+```
 
 Now, update the helm repository with the following command: -
 
@@ -552,7 +579,8 @@ helm repo update bitnami -n ckad10-finance-ns
 ``` 
 The above command updates the local cache of available charts from the configured chart repositories.
 
-The helm search command searches for all the available charts in a specific Helm chart repository. In our case, it's the nginx helm chart.
+The helm search command searches for all the available charts in a specific Helm chart repository. 
+In our case, it's the nginx helm chart.
 
 ``` 
 helm search repo bitnami/nginx -n ckad10-finance-ns -l | head -n30
@@ -578,7 +606,9 @@ Use the
  
 kubectl get command to check the replicas of the deployment: -
 
-``` kubectl get deploy -n ckad10-finance-ns ``` 
+``` 
+kubectl get deploy -n ckad10-finance-ns 
+``` 
 
 The available count 2 is under the AVAILABLE column.
 
@@ -597,7 +627,9 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3 ``` 
+``` 
+kubectl config use-context cluster3 
+``` 
 
 We have already deployed an ingress resource in the app-space namespace.
 
@@ -626,7 +658,8 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster3 by running:
 
-``` kubectl config use-context cluster3 ``` 
+``` kubectl config use-context cluster3 
+``` 
 
 We have deployed some pods in the namespaces ckad-alpha and ckad-beta.
 
@@ -635,9 +668,11 @@ You need to create a NetworkPolicy named ns-netpol-ckad that will restrict all P
 However, the NetworkPolicy you create should allow egress traffic on port 53 TCP and UDP.
 
 ## Solution
+
 The following manifest will restrict all the pods in ckad-alpha namespace to only have egress traffic to pods in namespace ckad-beta. But it will allow egress on port 53.
 
-```  apiVersion: networking.k8s.io/v1
+```  
+apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: ns-netpol-ckad
@@ -678,7 +713,8 @@ SECTION: SERVICES AND NETWORKING
 
 For this question, please set the context to cluster2 by running:
 
-``` kubectl config use-context cluster2 ``` 
+``` kubectl config use-context cluster2 
+``` 
 
 We have deployed an application in the green-space namespace. we also deployed the ingress controller and the ingress resource.
 
@@ -690,7 +726,8 @@ Note: You are allowed to edit or delete the resources related to ingress but do 
 Check the status of the ingress, pods, and application related services.
 
 ``` 
-cluster2-controlplane ~ ➜  k get pods -n ingress-nginx 
+cluster2-controlplane ~ ➜  
+k get pods -n ingress-nginx 
 NAME                                        READY   STATUS      RESTARTS      AGE
 ingress-nginx-admission-create-l6fgw        0/1     Completed   0             11m
 ingress-nginx-admission-patch-sfgc4         0/1     Completed   0             11m
@@ -698,20 +735,24 @@ ingress-nginx-controller-5f8964959d-278rc   0/1     Error       2 (26s ago)   29
 ``` 
 
 You would see an Error or CrashLoopBackOff in the ingress-nginx-controller. Inspect the logs of the controller pod.
+```
 
-cluster2-controlplane ~ ✖ k logs -n ingress-nginx ingress-nginx-controller-5f8964959d-278rc 
+cluster2-controlplane ~ ✖ 
+k logs -n ingress-nginx ingress-nginx-controller-5f8964959d-278rc 
 -------------------------------------------------------------------------------
 --------
 F0316 08:03:28.111614      57 main.go:83] No service with name default-backend-service found in namespace default:
 
 -------
+```
 
 You see an error msg saying "No service with name default-backend-service found in namespace default".
 
 We don't have the service with that name in the default namespace, so we need to edit the ingress controller deployment to use the service that we have .i.e. default-backend-service in the green-space namespace.
 To create the controller deployment with correct backend service, first save the deployment in a file, delete the controller deployment, edit the file and create the deployment.
 Save the deployment in file
-k get -n ingress-nginx deployments.apps ingress-nginx-controller -o yaml >> ing-control.yaml
+
+``` k get -n ingress-nginx deployments.apps ingress-nginx-controller -o yaml >> ing-control.yaml```
 
 Delete the deployment.
 ```  k delete -n ingress-nginx deploy ingress-nginx-controller ``` 
@@ -740,10 +781,15 @@ Apply the manifest, it should be up and running.
 You can verify the application is running via going to host cluster2-controlplane: ssh cluster2-controlplane and curl request to the application endpoint
 
 # App Video Service
-```  curl -H "Host: app-video.localhost" http://localhost:30080 ``` 
+
+```  
+curl -H "Host: app-video.localhost" http://localhost:30080 
+``` 
 
 # App Wear Service 
-```  curl -H "Host: app-wear.localhost" http://localhost:30080 ``` 
+```  
+curl -H "Host: app-wear.localhost" http://localhost:30080 
+``` 
 
 ## Details
 
@@ -760,7 +806,9 @@ SECTION: APPLICATION ENVIRONMENT, CONFIGURATION and SECURITY
 
 For this question, please set the context to cluster1 by running:
 
-``` kubectl config use-context cluster1 ``` 
+``` 
+kubectl config use-context cluster1 
+``` 
 
 In the ckad18-rq-ns-aecs namespace, create a ResourceQuota called ckad18-rq-aecs. This ResourceQuota should have the following specifications for CPU and memory:
 
