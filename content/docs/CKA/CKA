@@ -1,0 +1,203 @@
+Notes from killerkoda
+
+sudo kubeadm certs check-expiration
+sudo kubeadm certs renew all
+kubeadm config images list
+kubectl get nodes
+kubectl get pods -A
+kubectl cluster-info
+
+# Restart kubelet to pick up new certificates
+sudo systemctl restart kubelet
+sudo systemctl list-unit-files --type service --all | grep kube
+
+#Upgrade 
+
+kubeadm upgrade plan
+apt-cache madison kubelet
+apt-cache madison kubectl
+apt-cache madison kubeadm
+
+# get the version of kubeadm
+
+kubeadm version -o json | jq
+# upgrade kubeadm to version 1.34.2
+sudo apt install -y kubeadm=1.34.2-1.1
+
+# upgrade components to version v1.34.2
+kubeadm upgrade apply v1.34.2
+
+sudo dpkg -i *.deb
+sudo systemctl 
+
+CKA: Configure cri-dockerd Container Runtime
+Configure cri-dockerd Runtime
+🧠 CKA: Configure cri-dockerd on a Node
+📚 Official Kubernetes Documentation:
+
+Container Runtimes
+Network Plugin Requirements
+Installing kubeadm
+🏢 Context
+Your team is preparing a Kubernetes node to support Docker-based workloads using cri-dockerd as the container runtime interface. A Debian installation package has already been placed on the node at ~/cri-dockerd.deb .
+
+You must ensure the node is correctly configured so that Kubernetes components can interact with the runtime without issues.
+
+Docker is already installed and running on the system, but the CRI (Container Runtime Interface) adapter is not yet configured.
+
+❓ Question
+Install cri-dockerd from the provided .deb package, enable the cri-docker service, and ensure it is running.
+
+Additionally, configure the system with the following required kernel and networking parameters:
+
+net.bridge.bridge-nf-call-iptables should be set to 1
+net.ipv6.conf.all.forwarding should be set to 1,
+net.ipv4.ip_forward should be set to 1
+net.netfilter.nf_conntrack_max should be set to 131072.
+All parameter configurations must be made persistent by placing them in the file:
+
+/etc/sysctl.d/99-kubernetes-cri.conf
+Try it yourself first!
+✅ Solution (expand to view)
+Step 1: Verify the package exists
+
+Check that the cri-dockerd package is available:
+
+ls -lh ~/cri-dockerd.deb
+Step 2: Install the cri-dockerd package
+
+Install the package using dpkg:
+
+sudo dpkg -i ~/cri-dockerd.deb
+If there are dependency issues, fix them:
+
+sudo apt-get install -f -y
+Step 3: Verify the installation
+
+Check that cri-dockerd binaries are installed:
+
+which cri-dockerd
+cri-dockerd --version
+Step 4: Enable and start the cri-docker service
+
+Enable the service to start on boot:
+
+sudo systemctl enable cri-docker.service
+sudo systemctl enable cri-docker.socket
+Start the services:
+
+sudo systemctl start cri-docker.service
+sudo systemctl start cri-docker.socket
+Step 5: Verify the service is running
+
+Check the service status:
+
+sudo systemctl status cri-docker.service
+sudo systemctl status cri-docker.socket
+Check if the socket is active:
+
+sudo systemctl is-active cri-docker.socket
+Step 6: Configure kernel parameters for persistence
+
+Create a sysctl configuration file for Kubernetes networking:
+
+sudo tee /etc/sysctl.d/99-kubernetes-cri.conf <<EOF
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv6.conf.all.forwarding = 1
+net.ipv4.ip_forward = 1
+net.netfilter.nf_conntrack_max = 131072
+EOF
+Step 7: Apply the kernel parameters
+
+Apply the parameters immediately without reboot:
+
+sudo sysctl --system
+Alternatively, apply them directly:
+
+sudo sysctl -p /etc/sysctl.d/99-kubernetes-cri.conf
+Step 8: Verify the kernel parameters
+
+Check each parameter is set correctly:
+
+sysctl net.bridge.bridge-nf-call-iptables
+sysctl net.ipv6.conf.all.forwarding
+sysctl net.ipv4.ip_forward
+sysctl net.netfilter.nf_conntrack_max
+All should show the configured values.
+
+Step 9: Verify persistence
+
+Confirm the configuration file exists and will persist after reboot:
+
+cat /etc/sysctl.d/99-kubernetes-cri.conf
+Step 10: Test the cri-dockerd socket
+
+Verify the CRI socket is accessible:
+
+sudo ls -la /run/cri-dockerd.sock
+You can also test basic connectivity (requires crictl):
+
+# If crictl is available
+sudo crictl --runtime-endpoint unix:///run/cri-dockerd.sock version
+hint
+skip
+
+
+Log locations to check:
+
+/var/log/pods
+/var/log/containers
+crictl ps + crictl logs
+docker ps + docker logs (in case when Docker is used)
+kubelet logs: /var/log/syslog or journalctl
+
+watch crictl ps
+
+# check for apiserver pod
+k -n kube-system get pod
+cat /var/log/syslog | grep kube-apiserver
+
+find / | grep kubeadm
+service kubelet status
+grep kubelet /var/log/syslog
+service kubelet status
+service kubelet restart
+service kubelet status
+
+sysctl
+cd ./etc/sysctl.d
+sudo sysctl --system
+sudo dpkg -i *.deb
+systemctl enable --now cri-docker.service
+
+
+kubectl delete pod restricted --force --grace-period 0
+
+alias exam='grep Examples -A20'
+
+# kubectl run --help | exam
+# This will quickly get you just the examples for the command
+
+export dryrun='--dry-run=client -o yaml'
+
+kubeadm init --kubernetes-version=1.35.1 --pod-network-cidr 192.168.0.0/16 --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem
+
+cp /etc/kubernetes/admin.conf /root/.kube/config
+
+kubectl version
+
+kubectl get pod -A
+
+
+kubeadm init --kubernetes-version=1.35.1 --pod-network-cidr 192.168.0.0/16 --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem
+
+cp /etc/kubernetes/admin.conf /root/.kube/config
+
+kubectl version
+
+kubectl get pod -A
+
+# generate a new token OR use the one printed out "kubeadm init" before
+kubeadm token create --print-join-command
+
+kubectl get svc redis-service -o jsonpath='{.spec.ports[0].targetPort}'
