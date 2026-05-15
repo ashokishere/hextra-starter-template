@@ -1244,12 +1244,227 @@ aws-client ~ ➜  aws elbv2 describe-target-health \
 aws-client ~ ➜  
 ```
  
-Day 25: Setting Up an EC2 Instance and CloudWatch Alarm
+## Day 25: Setting Up an EC2 Instance and CloudWatch Alarm
+
+Launch EC2 Instance: Create an EC2 instance named nautilus-ec2 using any appropriate Ubuntu AMI.
+
+Create CloudWatch Alarm: Create a CloudWatch alarm named nautilus-alarm with the following specifications:
+
+Statistic: Average
+Metric: CPU Utilization
+Threshold: >= 90% for 1 consecutive 5-minute period.
+Alarm Actions: Send a notification to nautilus-sns-topic.
 ```
+
+aws-client ~ ➜  aws ec2 describe-images \
+  --owners 099720109477 \
+  --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" \
+  --query 'Images[*].[ImageId,Name,CreationDate]' \
+  --output table | sort -k3 -r | head -5
+|  ami-09d76382cbfc09f06|  ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260507  |  2026-05-07T11:45:29.000Z  |
+|  ami-05cf1e9f73fbad2e2|  ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260424  |  2026-04-24T10:54:31.000Z  |
+|  ami-009d9173b44d0482b|  ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260409  |  2026-04-09T14:13:23.000Z  |
+|  ami-04eaa218f1349d88b|  ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260321  |  2026-03-21T11:10:28.000Z  |
+|  ami-0462ececcfe0a450f|  ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260320  |  2026-03-20T11:01:46.000Z  |
+
+aws-client ~ ➜  aws ec2 describe-key-pairs \
+  --query 'KeyPairs[*].[KeyName,KeyPairId,KeyType,CreateTime]' \
+  --output table
+
+aws-client ~ ➜  showcreds
+╒══════════════════════╤═════════════════════════════════════════════════════════════════════╕
+│ Name                 │ Value                                                               │
+╞══════════════════════╪═════════════════════════════════════════════════════════════════════╡
+│ AWS Console URL      │ https://582762278555.signin.aws.amazon.com/console?region=us-east-1 │
+├──────────────────────┼─────────────────────────────────────────────────────────────────────┤
+│ AWS User Name        │ kk_labs_user_919972                                                 │
+├──────────────────────┼─────────────────────────────────────────────────────────────────────┤
+│ AWS Password         │ zJF!d@73Zb0Z                                                        │
+├──────────────────────┼─────────────────────────────────────────────────────────────────────┤
+│ AWS Session End Time │ 2026-05-14T04:24:57Z                                                │
+╘══════════════════════╧═════════════════════════════════════════════════════════════════════╛
+
+aws-client ~ ➜  aws ec2 create-key-pair \
+  --key-name nautilus-key \
+  --key-type rsa \
+  --key-format pem \
+  --query "KeyMaterial" \
+  --output text > nautilus-key.pem
+
+aws-client ~ ➜  chmod 400 nautilus-key.pem
+
+aws-client ~ ➜  aws ec2 describe-key-pairs --key-names nautilus-key
+{
+    "KeyPairs": [
+        {
+            "KeyPairId": "key-07798cce56809e7f7",
+            "KeyType": "rsa",
+            "Tags": [],
+            "CreateTime": "2026-05-14T03:29:53.548Z",
+            "KeyName": "nautilus-key",
+            "KeyFingerprint": "94:28:b6:0c:b8:44:0a:6c:76:77:1a:4c:0f:7a:f1:13:58:1d:83:6c"
+        }
+    ]
+}
+
+ 
+ 
+
+aws-client ~ ➜  aws ec2 describe-security-groups --filters "Name=group-name,Values=default" --query 'SecurityGroups[0].GroupId' --output text
+sg-0ea9c34b630f0b7e9
+
+aws-client ~ ➜  aws ec2 describe-subnets --filters "Name=map-public-ip-on-launch,Values=true" --query 'Subnets[0].SubnetId' --output text
+subnet-0bb03eac9a40b63bf
+
+aws-client ~ ➜  aws ec2 run-instances \
+  --image-id ami-0462ececcfe0a450f \
+  --instance-type t3.micro \
+  --key-name nautilus-key \
+  --security-group-ids sg-0ea9c34b630f0b7e9 \                                    
+  --subnet-id subnet-0bb03eac9a40b63bf \                                           
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=nautilus-ec2}]' \
+  --query 'Instances[0].InstanceId' \
+  --output text
+i-0937db8e8f9dda833
+
+aws-client ~ ➜  aws sns create-topic --name nautilus-sns-topic
+{
+    "TopicArn": "arn:aws:sns:us-east-1:582762278555:nautilus-sns-topic"
+}
+
+aws-client ~ ➜  aws sns subscribe \
+  --topic-arn arn:aws:sns:us-east-1:582762278555:nautilus-sns-topic \
+  --protocol email \
+  --notification-endpoint ilovedevops2022@gmail.com
+{
+    "SubscriptionArn": "pending confirmation"
+}
+
+aws-client ~ ➜  aws cloudwatch put-metric-alarm \
+  --alarm-name nautilus-alarm \
+  --alarm-description "Alarm when CPU exceeds 90% for 5 minutes" \
+  --metric-name CPUUtilization \
+  --namespace AWS/EC2 \
+  --statistic Average \
+  --period 300 \
+  --evaluation-periods 1 \
+  --threshold 90 \
+  --comparison-operator GreaterThanOrEqualToThreshold \
+  --dimensions "Name=InstanceId,Value=i-0937db8e8f9dda833" \
+  --alarm-actions arn:aws:sns:us-east-1:582762278555:nautilus-sns-topic \
+  --unit Percent
+
+ 
+
+aws-client ~ ✖ 
+
+
 ```
  
-Day 26: Configuring an EC2 Instance as a Web Server with Nginx
+## Day 26: Configuring an EC2 Instance as a Web Server with Nginx
+
+As a member of the Nautilus DevOps Team, your task is to create an EC2 instance with the following specifications:
+
+Instance Name: The EC2 instance must be named devops-ec2.
+
+AMI: Use any available Ubuntu AMI to create this instance.
+
+User Data Script: Configure the instance to run a user data script during its launch. This script should:
+
+Install the Nginx package.
+Start the Nginx service.
+Security Group: Ensure that the instance allows HTTP traffic on port 80 from the internet.
+
 ```
+aws-client ~ ➜  aws ec2 create-key-pair \
+  --key-name nautilus-key \
+  --key-type rsa \
+  --key-format pem \
+  --query "KeyMaterial" \
+  --output text > nautilus-key.pem
+
+aws-client ~ ➜  chmod 400 nautilus-key.pem
+
+aws-client ~ ➜  aws ec2 describe-key-pairs --key-names nautilus-key
+{
+    "KeyPairs": [
+        {
+            "KeyPairId": "key-0c1b3bef691a1be30",
+            "KeyType": "rsa",
+            "Tags": [],
+            "CreateTime": "2026-05-14T04:20:10.683Z",
+            "KeyName": "nautilus-key",
+            "KeyFingerprint": "4e:9d:fb:17:b3:08:54:e5:43:9e:9b:f6:4f:f0:ef:c4:f4:eb:04:9e"
+        }
+    ]
+}
+
+aws-client ~ ➜   aws ec2 describe-subnets --filters "Name=map-public-ip-on-launch,Values=true" --query 'Subnets[0].SubnetId' --output text
+subnet-07525cfa19b92ee96
+
+aws-client ~ ➜  aws ec2 describe-security-groups --filters "Name=group-name,Values=default" --query 'SecurityGroups[0].GroupId' --output text
+sg-04e57b00614827ce9
+
+
+aws-client ~ ➜  aws ec2 describe-security-groups \
+  --group-ids sg-04e57b00614827ce9 \
+  --query 'SecurityGroups[0].IpPermissions[?ToPort==`80`]' \
+  --output table
+
+ws-client ~ ✖ aws ec2 authorize-security-group-ingress \
+  --group-id sg-04e57b00614827ce9 \
+  --protocol tcp \
+  --port 80 \
+  --cidr 0.0.0.0/0
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0af66caa19742d534",
+            "GroupId": "sg-04e57b00614827ce9",
+            "GroupOwnerId": "254597876252",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIpv4": "0.0.0.0/0",
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:254597876252:security-group-rule/sgr-0af66caa19742d534"
+        }
+    ]
+}
+
+aws-client ~ ➜  aws ec2 authorize-security-group-ingress \
+  --group-id sg-04e57b00614827ce9 \
+  --protocol tcp \
+  --port 22 \
+  --cidr 0.0.0.0/0
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0f9bdd99d6456f24e",
+            "GroupId": "sg-04e57b00614827ce9",
+            "GroupOwnerId": "254597876252",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIpv4": "0.0.0.0/0",
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:254597876252:security-group-rule/sgr-0f9bdd99d6456f24e"
+        }
+    ]
+}
+
+aws-client ~ ➜  ssh -i nautilus-key.pem ubuntu@98.93.144.59
+The authenticity of host '98.93.144.59 (98.93.144.59)' can't be established.
+ECDSA key fingerprint is SHA256:GEV2bL9lGFrz3Y7508g4wrEi33KQTby+MDSbtcUbSMQ.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '98.93.144.59' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 24.04.4 LTS (GNU/Linux 6.17.0-1013-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ 
+
 ```
  
 Day 27: Configuring a Public VPC with an EC2 Instance for Internet Access
