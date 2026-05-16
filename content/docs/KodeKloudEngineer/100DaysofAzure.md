@@ -644,7 +644,7 @@ Inside a VNet:
 
 ---
  
-
+ 
 ---
 
 ## 🟦 Azure VNet vs 🟧 AWS VPC (core idea)
