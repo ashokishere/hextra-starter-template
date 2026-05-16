@@ -866,3 +866,365 @@ kml_rg_main-67379a5e90e54693  eastus      Succeeded
 
 ~ ➜  
  ```
+
+## Day 8: Attach Managed Disk to Azure Virtual Machine
+
+ 
+
+### What you’re doing: Public IP allocation in Azure
+
+In Microsoft Azure, a **Public IP address** is a resource that allows Azure services (VMs, load balancers, etc.) to be reachable from the internet.
+
+You’re being asked to:
+
+> Create a Public IP named `nautilus-pip`
+
+This is commonly done during migrations so workloads can:
+
+- be accessed externally (SSH, HTTP, APIs)
+- maintain connectivity during phased migration
+- support hybrid architectures
+
+---
+
+### Azure concept (simple)
+
+A Public IP in Azure is:
+
+- A standalone resource
+- Attached to a VM, NIC, or load balancer
+- Can be Static or Dynamic
+- Region-specific
+
+Think of it as a “public-facing identity” for a cloud resource.
+
+---
+
+### AWS comparison
+
+In Amazon Web Services:
+
+| Concept | Azure | AWS |
+| --- | --- | --- |
+| Public IP resource | Public IP Address | Public IPv4 (auto-assigned or Elastic IP) |
+| Static public IP | Static Public IP | Elastic IP (EIP) |
+| Attached to | NIC / VM / Load Balancer | EC2 instance / ENI |
+| Persistence | Optional (Static) | EIP is persistent |
+
+Key difference:
+
+- AWS uses **Elastic IP (EIP)** as a reusable static public IP
+- Azure uses a **Public IP resource** that can be static or dynamic
+
+---
+
+ 
+ 
+---
+
+### Why this matters in migration (your scenario)
+
+Since Nautilus is doing phased migration:
+
+- Public IPs allow **incremental cutover**
+- You can move services one VM at a time
+- DNS or routing can be switched gradually
+- Reduces downtime risk compared to a “big bang” migration
+
+---
+ 
+
+---
+
+### Quick concept check
+
+A **resource group in Azure** is basically:
+
+- A container for related resources (VMs, networks, disks, IPs)
+- Used for lifecycle management (create/delete everything together)
+
+---
+
+### AWS comparison
+
+In Amazon Web Services:
+
+- Closest equivalent: a mix of **tags + accounts + stacks (CloudFormation)**
+- But AWS does NOT have a strict “resource group” container like Azure
+
+v
+
+ ```
+ ~ ➜  showcreds
+╒═════════════════════════════╤════════════════════════════════════════════════════════════════════╕
+│ Name                        │ Value                                                              │
+╞═════════════════════════════╪════════════════════════════════════════════════════════════════════╡
+│ Azure Console URL           │ https://portal.azure.com/azurefreekmlprod.onmicrosoft.com          │
+├─────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+│ Azure User Name             │ kk_lab_user_main-0a9c870439d84de1@azurefreekmlprod.onmicrosoft.com │
+├─────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+│ Azure Password              │ 7DPNG$8N                                                           │
+├─────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+│ Azure Application Client ID │ 4c8925bf-bfd3-46aa-a802-9381090233da                               │
+├─────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+│ Azure Client Secret         │ plS8Q~bfLiZIT_LGfzFj9iiBqCS7zIFWQOTBPcwt                           │
+├─────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+│ Azure Session End Time      │ Sat May 16 18:19:05 UTC 2026                                       │
+╘═════════════════════════════╧════════════════════════════════════════════════════════════════════╛
+
+~ ➜  az login
+To sign in, use a web browser to open the page https://login.microsoft.com/device and enter the code CTKMH2CRN to authenticate.
+
+Retrieving tenants and subscriptions for the selection...
+
+[Tenant and subscription selection]
+
+No     Subscription name    Subscription ID                       Tenant
+-----  -------------------  ------------------------------------  ----------------
+[1] *  Azure Free Labs      f0c3bcdd-5ce2-4fa0-8cf3-41559747512b  azurefreekmlprod
+
+The default is marked with an *; the default tenant is 'azurefreekmlprod' and subscription is 'Azure Free Labs' (f0c3bcdd-5ce2-4fa0-8cf3-41559747512b).
+
+Select a subscription and tenant (Type a number or Enter for no changes): 
+
+Tenant: azurefreekmlprod
+Subscription: Azure Free Labs (f0c3bcdd-5ce2-4fa0-8cf3-41559747512b)
+
+[Announcements]
+With the new Azure CLI login experience, you can select the subscription you want to use more easily. Learn more about it and its configuration at https://go.microsoft.com/fwlink/?linkid=2271236
+
+If you encounter any problem, please open an issue at https://aka.ms/azclibug
+
+[Warning] The login output has been updated. Please be aware that it no longer displays the full list of available subscriptions by default.
+
+
+~ ➜  az group list --output table
+Name                          Location    Status
+----------------------------  ----------  ---------
+kml_rg_main-0a9c870439d84de1  eastus      Succeeded
+
+~ ➜  az group show --name <resource-group-name>
+-bash: syntax error near unexpected token `newline'
+
+~ ✖ az group show --name kml_rg_main-0a9c870439d84de1
+{
+  "id": "/subscriptions/f0c3bcdd-5ce2-4fa0-8cf3-41559747512b/resourceGroups/kml_rg_main-0a9c870439d84de1",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "kml_rg_main-0a9c870439d84de1",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+
+~ ➜  az network public-ip create \
+  --name nautilus-pip \
+  --resource-group kml_rg_main-0a9c870439d84de1 \
+  --allocation-method Static \
+  --sku Standard
+[Coming breaking change] In the coming release, the default behavior will be changed as follows when sku is Standard and zone is not provided: For zonal regions, you will get a zone-redundant IP indicated by zones:["1","2","3"]; For non-zonal regions, you will get a non zone-redundant IP indicated by zones:null.
+{
+  "publicIp": {
+    "ddosSettings": {
+      "protectionMode": "VirtualNetworkInherited"
+    },
+    "etag": "W/\"a71d62a6-c6d0-4ea4-98d1-dfc20f85c243\"",
+    "id": "/subscriptions/f0c3bcdd-5ce2-4fa0-8cf3-41559747512b/resourceGroups/kml_rg_main-0a9c870439d84de1/providers/Microsoft.Network/publicIPAddresses/nautilus-pip",
+    "idleTimeoutInMinutes": 4,
+    "ipAddress": "20.228.157.81",
+    "ipTags": [],
+    "location": "eastus",
+    "name": "nautilus-pip",
+    "provisioningState": "Succeeded",
+    "publicIPAddressVersion": "IPv4",
+    "publicIPAllocationMethod": "Static",
+    "resourceGroup": "kml_rg_main-0a9c870439d84de1",
+    "resourceGuid": "29dce163-6f2c-4e9b-bae0-39bef528300a",
+    "sku": {
+      "name": "Standard",
+      "tier": "Regional"
+    },
+    "type": "Microsoft.Network/publicIPAddresses"
+  }
+}
+
+~ ➜  
+
+ ```
+
+###
+
+ 
+
+
+ 
+### Concept: Attaching a data disk to a VM (Azure)
+
+In cloud computing, a **virtual machine (VM)** usually comes with an **operating system (OS) disk**, but you often need extra storage for application data, logs, databases, etc. That’s where a **data disk** comes in.
+
+In your case:
+
+- VM: Azure Virtual Machines (`datacenter-vm`)
+- Disk: Azure **managed disk** (`datacenter-disk`)
+
+A **managed disk** in Azure is a durable block storage resource that exists independently of a VM. Attaching it means:
+
+- The VM gains an additional storage volume
+- The disk is mounted inside the OS after attachment
+- Data persists even if the VM is stopped or rebuilt (as long as the disk isn’t deleted)
+
+So conceptually:
+
+> VM = compute engine  
+> Managed disk = external hard drive in the cloud  
+> Attaching = plugging the drive into the VM
+
+
+ 
+### How Azure does it (key idea)
+
+With Azure Managed Disks:
+
+- Disks are **first-class resources**
+- They are created and managed independently
+- You explicitly attach/detach them from VMs
+- Azure handles redundancy (LRS/ZRS/GRS depending on configuration)
+
+This makes storage:
+
+- More modular
+- Easier to scale
+- Safer (decoupled lifecycle from VM)
+
+---
+
+## AWS equivalent
+
+In Amazon Web Services, the closest equivalents are:
+
+- VM → Amazon Elastic Compute Cloud (EC2 instance)
+- Disk → Amazon Elastic Block Store (EBS volume)
+
+---
+
+### AWS vs Azure comparison
+
+| Concept | Azure | AWS | Key idea |
+| --- | --- | --- | --- |
+| Compute VM | Azure Virtual Machines | EC2 | Virtual server |
+| Block storage | Managed Disks | EBS Volumes | Persistent disk |
+| Attach storage | Attach disk to VM | Attach EBS to EC2 | Same concept |
+| Lifecycle | Independent disk resource | Independent volume resource | Both decoupled |
+| Default behavior | Auto-managed by Azure | More explicit configuration needed | Azure is slightly more automated |
+
+---
+
+### Key differences (practical)
+
+**1\. Abstraction level**
+
+- Azure: Managed Disks hide storage account complexity
+- AWS: EBS is simpler historically, but still more visible as a distinct service
+
+**2\. Naming and structure**
+
+- Azure: “data disk” is a role attached to VM
+- AWS: “EBS volume” is always the unit; attachment is more explicit
+
+**3\. Flexibility**
+
+- Both allow:
+	- Resize disks
+		- Snapshots
+		- Detach/reattach to other VMs
+
+---
+
+### Mental model
+
+Think of both systems like this:
+
+- VM = laptop
+- Disk = external SSD
+- Attachment = plugging SSD into laptop
+- Data persists independently of the laptop lifecycle
+
+```
+~ ➜  az login
+To sign in, use a web browser to open the page https://login.microsoft.com/device and enter the code C7DZ3JYUX to authenticate.
+
+Retrieving tenants and subscriptions for the selection...
+
+[Tenant and subscription selection]
+
+No     Subscription name    Subscription ID                       Tenant
+-----  -------------------  ------------------------------------  ----------------
+[1] *  Azure Free Labs      f0c3bcdd-5ce2-4fa0-8cf3-41559747512b  azurefreekmlprod
+
+ .... 
+
+~ ➜  az group list --output table
+Name                          Location    Status
+----------------------------  ----------  ---------
+kml_rg_main-692f4f8f6d504287  eastus      Succeeded
+
+~ ➜  az vm get-instance-view \
+  --name datacenter-vm \
+  --resource-group kml_rg_main-692f4f8f6d504287 \
+  --query "instanceView.statuses"
+[
+  {
+    "code": "ProvisioningState/succeeded",
+    "displayStatus": "Provisioning succeeded",
+    "level": "Info",
+    "message": null,
+    "time": "2026-05-16T17:40:35.142402+00:00"
+  },
+  {
+    "code": "PowerState/running",
+    "displayStatus": "VM running",
+    "level": "Info",
+    "message": null,
+    "time": null
+  }
+]
+
+~ ➜  az vm disk attach \
+  --resource-group kml_rg_main-692f4f8f6d504287 \
+  --vm-name datacenter-vm \
+  --name datacenter-disk
+
+ 
+
+~ ✖ az vm show   --resource-group kml_rg_main-692f4f8f6d504287   --name datacenter-vm   --query "storageProfile.d
+ataDisks"
+[
+  {
+    "caching": "None",
+    "createOption": "Attach",
+    "deleteOption": "Detach",
+    "detachOption": null,
+    "diskIopsReadWrite": null,
+    "diskMBpsReadWrite": null,
+    "diskSizeGb": 30,
+    "image": null,
+    "lun": 0,
+    "managedDisk": {
+      "diskEncryptionSet": null,
+      "id": "/subscriptions/f0c3bcdd-5ce2-4fa0-8cf3-41559747512b/resourceGroups/kml_rg_main-692f4f8f6d504287/providers/Microsoft.Compute/disks/datacenter-disk",
+      "resourceGroup": "kml_rg_main-692f4f8f6d504287",
+      "securityProfile": null,
+      "storageAccountType": "Standard_LRS"
+    },
+    "name": "datacenter-disk",
+    "sourceResource": null,
+    "toBeDetached": false,
+    "vhd": null,
+    "writeAcceleratorEnabled": null
+  }
+]
+
+~ ➜  
+```
