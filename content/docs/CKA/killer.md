@@ -1,4 +1,12 @@
- 
+---
+
+title: Killer
+type: docs
+prev: docs/CKA/CKAD7
+next: docs/CKA/Q1
+
+---
+
 
 Each ## Questionneeds to be solved on a specific instance other than your main candidate@terminal. You'll need to connect to the correct instance via ssh, the command is provided before each question. To connect to a different instance you always need to return first to your main terminal by running the exit command, from there you can connect to a different one.
 
@@ -26,7 +34,10 @@ Save the list to /opt/course/1/namespaces on ckad5601.
  
 
 ### ### Answer::
+```
+
 k get ns > /opt/course/1/namespaces
+
 The content should then look like:
 
 # /opt/course/1/namespaces
@@ -41,7 +52,7 @@ mars              Active   105m
 shell-intern      Active   105m
  
 
- 
+ ```
 
 ## Question2 | Pods
  
@@ -57,6 +68,8 @@ Your manager would like to run a command manually on occasion to output the stat
  
 
 ### ### Answer::
+
+```
 k run # help
 
 k run pod1 --image=httpd:2.4.41-alpine --dry-run=client -oyaml > 2.yaml
@@ -110,6 +123,7 @@ Running
  
 
  
+```
 
 ## Question3 | Job
  
@@ -124,7 +138,10 @@ Start the Job and check its history. Each pod created by the Job should have the
 
  
 
+
 ### ### Answer::
+
+```
 k -n neptune create job -h
 
 k -n neptune create job neb-new-job --image=busybox:1.31.0 --dry-run=client -oyaml -- sh -c "sleep 2 && echo done" > /opt/course/3/job.yaml
@@ -205,7 +222,7 @@ Events:
 At the age column we can see that two pods run parallel and the third one after that. Just as it was required in the task.
 
  
-
+```
  
 
 ## Question4 | Helm Management
@@ -228,6 +245,7 @@ There seems to be a broken release, stuck in pending-install state. Find it and 
  
 
 ### ### Answer::
+
 Helm Chart: Kubernetes YAML template-files combined into a single package, Values allow customisation
 
 Helm Release: Installed instance of a Chart
@@ -238,6 +256,7 @@ Helm Values: Allow to customise the YAML template-files in a Chart when creating
 
 Step 1
 First we should delete the required release:
+```
 
 ➜ helm -n mercury ls
 NAME                            NAMESPACE    ...   STATUS      CHART
@@ -253,10 +272,12 @@ NAME                            NAMESPACE    ...   STATUS      CHART
 internal-issue-report-apiv2     mercury      ...   deployed    nginx-18.1.14     
 internal-issue-report-app       mercury      ...   deployed    nginx-18.1.14
  
+```
 
 Step 2
 Next we need to upgrade a release, for this we could first list the charts of the repo:
 
+```
 ➜ helm repo list
 NAME            URL                  
 killershell     http://localhost:6000
@@ -292,11 +313,13 @@ Looking good!
 
 INFO: Also check out helm rollback for undoing a helm rollout/upgrade
 
- 
+ ```
 
 Step 3
+
 Now we're asked to install a new release, with a customised values setting. For this we first list all possible value settings for the chart, we can do this via:
 
+```
 ➜ helm show values killershell/apache
 global:
   imageRegistry: ""
@@ -349,11 +372,13 @@ NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
 internal-issue-report-apache   2/2     2            2           64s
 We see a healthy deployment with two replicas!
 
- 
+ ```
 
 Step 4
+
 Find and delete the broken release:
 
+```
 ➜ helm -n mercury ls
 NAME                            NAMESPACE   ...  STATUS            CHART
 internal-issue-report-apache    mercury     ...  deployed          apache-11.2.20
@@ -365,7 +390,7 @@ internal-issue-report-daniel    mercury     ...  pending-install   nginx-18.1.14
 release "internal-issue-report-daniel" uninstalled
 Thank you Helm for making our lives easier! (Till something breaks)
 
- 
+ ```
 
  
 
@@ -381,13 +406,18 @@ Team Neptune has its own ServiceAccount named neptune-sa-v2 in Namespace neptune
  
 
 ### ### Answer::
+
 Secrets won't be created automatically for *ServiceAccounts, but it's possible to create a Secret manually and attach it to a ServiceAccount by setting the correct annotation on the Secret. This was done for this task.
 
+```
 k -n neptune get sa # get overview
 k -n neptune get secrets # shows all secrets of namespace
 k -n neptune get secrets -oyaml | grep annotations -A 1 # shows secrets with first annotation
+```
+
 If a Secret belongs to a ServiceAccount, it'll have the annotation kubernetes.io/service-account.name. Here the Secret we're looking for is neptune-secret-1.
 
+```
 ➜ k -n neptune get secret neptune-secret-1 -o yaml
 apiVersion: v1
 data:
@@ -413,7 +443,8 @@ File /opt/course/5/token should contain the token:
 eyJhbGciOiJSUzI1NiIsImtpZCI6Im5aZFdqZDJ2aGNvQ3BqWHZOR1g1b3pIcm5JZ0hHNWxTZkwzQnFaaTFad2MifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJuZXB0dW5lIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6Im5lcHR1bmUtc2EtdjItdG9rZW4tZnE5MmoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoibmVwdHVuZS1zYS12MiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjY2YmRjNjM2LTJlYzMtNDJhZC04OGE1LWFhYzFlZjZlOTZlNSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpuZXB0dW5lOm5lcHR1bmUtc2EtdjIifQ.VYgboM4CTd0pdCJ78wjUwmtalh-2vsKjANyPsh-6guEwOtWEq5Fbw5ZHPtvAdrLlPzpOHEbAe4eUM95BRGWbYIdwjuN95J0D4RNFkVUt48twoakRV7h-aPuwsQXHhZZzy4yimFHG9Ufmsk5Yr4RVcG6n137y-FH08K8zZjIPAsKDqNBQtxg-lZvwVMi6viIhrrzAQs0MBOV82OJYGy2o-WQVc0UUanCf94Y3gT0YTiqQvczYMs6nz9ut-XgwitrBY6Tj9BgPprA9k_j5qEx_LUUZUpPAiEN7OzdkJsI8ctth10lypI1AeFr43t6ALyrQoBM39abDfq3FksR-oc_WMw
  
 
- 
+ ```
+
 
 ## Question6 | ReadinessProbe
  
@@ -429,6 +460,7 @@ The Pod should run the command touch /tmp/ready && sleep 1d, which will create t
  
 
 ### ### Answer::
+```
 k run pod6 --image=busybox:1.31.0 --dry-run=client -oyaml --command -- sh -c "touch /tmp/ready && sleep 1d" > 6.yaml
 
 vim 6.yaml
@@ -480,7 +512,7 @@ NAME   READY   STATUS    RESTARTS   AGE
 pod6   1/1     Running   0          15s
 We see that the Pod is finally ready.
 
- 
+ ```
 
  
 
@@ -498,8 +530,10 @@ Search for the correct Pod in Namespace saturn and move it to Namespace neptune.
  
 
 ### ### Answer::
+
 Let's see all those Pods:
 
+```
 ➜ k -n saturn get pod
 NAME                READY   STATUS    RESTARTS   AGE
 webserver-sat-001   1/1     Running   0          111m
@@ -551,7 +585,7 @@ neptune        webserver-sat-003         1/1     Running            0          6
 This should list only one pod called webserver-sat-003 in Namespace neptune, status running.
 
  
-
+```
  
 
 ## Question8 | Deployment, Rollouts
@@ -566,6 +600,7 @@ There is an existing Deployment named api-new-c32 in Namespace neptune. A develo
  
 
 ### ### Answer::
+```
 k -n neptune get deploy # overview
 k -n neptune rollout -h
 k -n neptune rollout history -h
@@ -611,7 +646,7 @@ Also a fast way to get an overview of the ReplicaSets of a Deployment and their 
 
 k -n neptune get rs -o wide | grep api-new-c32
  
-
+```
  
 
 ## Question9 | Pod -> Deployment
@@ -632,8 +667,10 @@ Please create the Deployment and save its yaml under /opt/course/9/holy-api-depl
  
 
 ### Answer:
+
 There are multiple ways to do this, one is to copy an Deployment example from https://kubernetes.io/docs and then merge it with the existing Pod yaml. That's what we will do now:
 
+```
 cp /opt/course/9/holy-api-pod.yaml /opt/course/9/holy-api-deployment.yaml # make a copy!
 
 vim /opt/course/9/holy-api-deployment.yaml
@@ -709,7 +746,7 @@ pod/holy-api-5dbfdb4569-rj2gz   1/1     Running   0          2m4s
 
 deployment.extensions/holy-api   3/3     3            3           2m4s
  
-
+```
  
 
 ## Question10 | Service, Logs
@@ -723,7 +760,7 @@ Team Pluto needs a new cluster internal Service. Create a ClusterIP Service name
 
 Finally use for example curl from a temporary nginx:alpine Pod to get the response from the Service. Write the response into /opt/course/10/service_test.html on ckad9043. Also check if the logs of Pod project-plt-6cc-api show the request and write those into /opt/course/10/service_test.log on ckad9043.
 
- 
+ ```
 
 ### Answer:
 k -n pluto run project-plt-6cc-api --image=nginx:1.17.3-alpine --labels project=plt-6cc-api
@@ -844,7 +881,7 @@ k -n pluto logs project-plt-6cc-api > /opt/course/10/service_test.log
 10.44.0.0 - - [22/Jan/2021:23:19:55 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.69.1" "-"
  
 
- 
+ ```
 
 ## Question11 | Working with Containers
  
@@ -874,6 +911,7 @@ Write the logs your container sun-cipher produces into /opt/course/11/logs on ck
  
 
 ### Answer:
+
 Dockerfile: list of commands from which an Image can be build
 
 Image: binary file which includes all data/requirements to be run as a Container
@@ -883,10 +921,10 @@ Container: running instance of an Image
 Registry: place where we can push/pull Images to/from
 
  
-
 Step 1
 We should probably create a backup:
 
+```
 ➜ cp /opt/course/11/image/Dockerfile /opt/course/11/image/Dockerfile_bak
 First we need to change the /opt/course/11/image/Dockerfile to:
 
@@ -902,11 +940,14 @@ COPY --from=0 /src/bin/app app
 # CHANGE NEXT LINE
 ENV SUN_CIPHER_ID=5b9c1065-e39d-4a43-a04a-e59bcea3e03f
 CMD ["./app"]
- 
+ ```
+
 
 Step 2
+
 Then we build the image using Docker:
 
+```
 ➜ cd /opt/course/11/image
 
 ➜ sudo docker build -t registry.killer.sh:5000/sun-cipher:v1-docker .
@@ -926,11 +967,13 @@ c947fb5eba52: Pushed
 latest: digest: sha256:d216b4136a5b232b738698e826e7d12fccba9921d163b63777be23572250f23d size: 739
 There we go, built and pushed.
 
- 
+ ```
 
 Step 3
+
 Next we build the image using Podman. Here it's only required to create one tag. The usage of Podman is very similar (for most cases even identical) to Docker:
 
+```
 ➜ cd /opt/course/11/image
 
 ➜ sudo podman build -t registry.killer.sh:5000/sun-cipher:v1-podman .
@@ -953,18 +996,21 @@ Writing manifest to image destination
 Storing signatures
 Built and pushed using Podman.
 
- 
+ ```
 
 Step 4
+
 We'll create a container from the perviously created image, using Podman, which keeps running in the background:
 
+```
 ➜ sudo podman run -d --name sun-cipher registry.killer.sh:5000/sun-cipher:v1-podman
 f8199cba792f9fd2d1bd4decc9b7a9c0acfb975d95eda35f5f583c9efbf95589
- 
+```
 
 Step 5
 Finally we need to collect some information into files:
 
+```
 ➜ sudo podman logs sun-cipher
 2077/03/13 06:50:34 random number for 5b9c1065-e39d-4a43-a04a-e59bcea3e03f is 8081
 2077/03/13 06:50:34 random number for 5b9c1065-e39d-4a43-a04a-e59bcea3e03f is 7887
@@ -984,7 +1030,7 @@ Finally we need to collect some information into files:
 ➜ sudo podman logs sun-cipher > /opt/course/11/logs
 This is looking not too bad at all. Our container skills are back in town!
 
- 
+ ```
 
  
 
@@ -1004,6 +1050,8 @@ Finally create a new Deployment project-earthflower in Namespace earth which mou
  
 
 ### Answer:
+
+```
 vim 12_pv.yaml
 Find an example from https://kubernetes.io/docs and alter it:
 
@@ -1096,7 +1144,7 @@ We can confirm it's mounting correctly:
       /tmp/project-data from data (rw) # there it is
       /var/run/secrets/kubernetes.io/serviceaccount from default-token-n2sjj (ro)
  
-
+```
  
 
 ## Question13 | Storage, StorageClass, PVC
@@ -1113,6 +1161,8 @@ The provisioner moon-retainer will be created by another team, so it's expected 
  
 
 ### Answer:
+
+```
 vim 13_sc.yaml
 Head to https://kubernetes.io/docs, search for "storageclass" and alter the example code to this:
 
@@ -1161,7 +1211,7 @@ This confirms that the PVC waits for the provisioner moon-retainer to be created
 Waiting for a volume to be created either by the external provisioner 'moon-retainer' or manually by the system administrator. If volume creation is delayed, please verify that the provisioner is running and correctly registered.
  
 
- 
+ ```
 
 ## Question14 | Secret, Secret-Volume, Secret-Env
  
@@ -1177,6 +1227,8 @@ There is existing yaml for another Secret at /opt/course/14/secret2.yaml, create
  
 
 ### Answer:
+
+```
 k -n moon get pod # show pods
 k -n moon create secret -h # help
 k -n moon create secret generic -h # help
@@ -1290,7 +1342,7 @@ SECRET1_PASS=pwd
 12345678
  
 
- 
+```
 
 ## Question15 | ConfigMap, Configmap-Volume
  
@@ -1306,8 +1358,11 @@ The Deployment web-moon is already configured to work with this ConfigMap and se
  
 
 ### Answer:
+
+
 Let's check the existing Pods:
 
+```
 ➜ k -n moon get pod
 NAME                        READY   STATUS              RESTARTS   AGE
 secret-handler              1/1     Running             0          55m
@@ -1389,7 +1444,7 @@ And check the mounted folder content:
 Here it was important that the file will have the name index.html and not the original one web-moon.html which is controlled through the ConfigMap data key.
 
  
-
+```
  
 
 ## Question16 | Logging sidecar
@@ -1412,6 +1467,7 @@ Check if the logs of the new container reveal something about the missing data i
 ### Answer:
 Sidecar containers in K8s are initContainers with restartPolicy: Always. Search for "Sidecar Containers" in the K8s Docs to familiarise yourself if necessary.
 
+```
 cp /opt/course/16/cleaner.yaml /opt/course/16/cleaner-new.yaml
 vim /opt/course/16/cleaner-new.yaml
 Add a sidecar container which outputs the log file to stdout:
@@ -1515,7 +1571,7 @@ Wed Sep 11 10:45:45 UTC 2099: remove random file
 Mystery solved, something is removing files at random ;) It's important to understand how containers can communicate with each other using volumes.
 
  
-
+```
  
 
 ## Question17 | InitContainer
@@ -1534,6 +1590,8 @@ The InitContainer should be using image busybox:1.31.0. Test your implementation
  
 
 ### Answer:
+
+```
 cp /opt/course/17/test-init-container.yaml ~/17_test-init-container.yaml
 
 vim 17_test-init-container.yaml
@@ -1585,7 +1643,7 @@ k -n mars get pod -o wide # to get the cluster IP
 check this out!
 Beautiful.
 
- 
+ ```
 
  
 
@@ -1605,6 +1663,7 @@ You can test this with curl manager-api-svc.mars:4444 from a temporary nginx:alp
 ### Answer:
 First let's get an overview:
 
+```
 ➜ k -n mars get all
 NAME                                         READY   STATUS    RESTARTS   AGE
 pod/manager-api-deployment-dbcc6657d-bg2hh   1/1     Running   0          98m
@@ -1711,7 +1770,7 @@ pod default/tmp terminated (Error)
 Short manager-api-svc.mars or long manager-api-svc.mars.svc.cluster.local work.
 
  
-
+```
  
 
 ## Question19 | Service ClusterIP->NodePort
@@ -1730,6 +1789,7 @@ Test the NodePort Service using the internal IP of all available nodes and the p
 ### Answer:
 First we get an overview:
 
+```
 ➜ k -n jupiter get all
 NAME                                      READY   STATUS    RESTARTS   AGE
 pod/jupiter-crew-deploy-8cdf99bc9-klwqt   1/1     Running   0          34m
@@ -1791,7 +1851,7 @@ We can test the connection using the node IP:
 <html><body><h1>It works!</h1></body></html>
 Here we only have one node in the cluster, but the Service would be reachable on all of them. Even if the Pod is just running on one specific node, the Service makes it available through port 30100 on the internal and external IP addresses of all nodes. This is at least the common/default behaviour but can depend on cluster configuration.
 
- 
+ ```
 
  
 
@@ -1817,6 +1877,7 @@ INFO: For learning NetworkPolicies check out https://editor.cilium.io. But you'r
 
 First we get an overview:
 
+``` 
 ➜ k -n venus get all
 NAME                            READY   STATUS    RESTARTS   AGE
 pod/api-5979b95578-gktxp        1/1     Running   0          57s
@@ -1927,7 +1988,8 @@ Connecting to api:2222 (10.3.255.137:2222)
 -                    100% |********************************|    45  0:00:00 ETA
  
 
- 
+ ```
+
 
 ## Question21 | Requests and Limits, ServiceAccount
  
@@ -1943,6 +2005,8 @@ Team Neptune has its own ServiceAccount neptune-sa-v2 under which the Pods shoul
  
 
 ### ### Answer::
+
+```
 k -n neptune create deployment -h # help
 k -n neptune create deploy -h # deploy is short for deployment
 
@@ -1993,19 +2057,16 @@ neptune-10ab-7d4b8d45b-lzwrf   1/1     Running            0          17s
 neptune-10ab-7d4b8d45b-z5hcc   1/1     Running            0          17s
  
 
- 
+ ```
 
-## Question22 | Labels, Annotations
-CKAD Simulator Preview Kubernetes 1.35
-https://killer.sh
 
  
 
-This is a preview of the CKAD Simulator content. The full CKAD Simulator contains 22 different questions. These preview questions are in addition to the provided ones and can also be solved in the interactive environment.
+ 
 
  
 
-Preview ## Question1
+ ## Question1
  
 
 Solve this ## Questionon instance: ssh ckad9043
@@ -2021,6 +2082,7 @@ The original Deployment yaml is available at /opt/course/p1/project-23-api.yaml.
 ### Answer:
 First we get an overview:
 
+```
 ➜ k -n pluto get all -o wide
 NAME                                  READY   STATUS    ... IP           ...
 pod/holy-api                          1/1     Running   ... 10.12.0.26   ...
@@ -2124,9 +2186,9 @@ We can also check the configured liveness-probe settings on a Pod or the Deploym
     Liveness:   tcp-socket :80 delay=10s timeout=1s period=15s #success=1 #failure=3
  
 
- 
+ ```
 
-Preview ## Question2
+ ## Question2
  
 
 Solve this ## Questionon instance: ssh ckad9043
@@ -2140,6 +2202,8 @@ Expose the Deployment internally using a ClusterIP Service named sun-srv on port
  
 
 ### Answer:
+
+```
 k -n sun create deployment -h #help
 
 k -n sun create deployment sunny --image=nginx:1.17.3-alpine --dry-run=client -oyaml > p2_sunny.yaml
@@ -2235,9 +2299,9 @@ NAME    READY   UP-TO-DATE   AVAILABLE   AGE
 sunny   4/4     4            4           13m
  
 
- 
+ ```
 
-Preview ## Question3
+## Question3
  
 
 Solve this ## Questionon instance: ssh ckad5601
@@ -2253,6 +2317,7 @@ Find the Service, fix any issues and confirm it's working again. Write the reaso
 ### Answer:
 First we get an overview of the resources in Namespace earth:
 
+```
 ➜ k -n earth get all
 NAME                                          READY   STATUS    RESTARTS   AGE
 pod/earth-2x3-api-584df69757-ngnwp            1/1     Running   0          116m
@@ -2438,6 +2503,7 @@ vim /opt/course/p3/ticket-654.txt
 # /opt/course/p3/ticket-654.txt
 Wrong port for readinessProbe defined!
  
+ ```
 
 ## CKAD Tips Kubernetes 1.35
 
@@ -2446,6 +2512,7 @@ In this section we'll provide some tips on how to handle the CKAD exam.
  
 
 ## Knowledge
+
 Study all topics as proposed in the curriculum until you feel comfortable with all
 
 Learn and Study the in-browser scenarios on https://killercoda.com/killer-shell-ckad
@@ -2588,9 +2655,12 @@ Settings
 
 In case you face a situation where vim is not configured properly and you face for example issues with pasting copied content you should be able to configure via ~/.vimrc or by entering manually in vim settings mode:
 
+```
 set tabstop=2
 set expandtab
 set shiftwidth=2
+```
+
 The expandtab option makes sure to use spaces for tabs.
 
 Note that changes in ~/.vimrc will not be transferred when connecting to other instances via ssh.
