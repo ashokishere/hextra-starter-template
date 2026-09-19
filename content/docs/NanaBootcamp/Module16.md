@@ -1,12 +1,4 @@
----
-title: Programming Basics with Python
-type: docs
-prev: docs/NanaBootcamo/Module12
-next: docs/NanaBootcamo/Module13
-sidebar:
-  open: true
----
- 
+# Programming with Python  Automation for DevOps
 
 ---
 
@@ -98,36 +90,3 @@ sidebar:
 3. **Keep Functions Focused**: Functions should be small and adhere to the Single Responsibility Principle. If a function requires many parameters, split its logic.
 4. **Avoid Over-Commenting**: Write self-explanatory code with clear variable and function names rather than adding obvious comments.
 5. **PEP 8 Compliance**: Follow official Python PEP 8 style guides, including using spaces for indentation
-
-
-
-
-### Python Basics
-
- 
-
-#### Are Variables Objects?
-
-In Python, variables are references to objects. A variable is **not** the object itself—it points to the object in memory. This allows variables to use multiple methods and functions available to the object.  
-
-- You can check the type of a variable using `type()`.
-- Python variables are dynamically typed and can be reassigned to objects of different types. (Unlike statically typed languages such as Go, where types are fixed.)
-
-#### Useful Variable Functions & Methods
-
-- **Casting / Conversion**
-  - `str()` – convert to string
-  - `int()` – convert to integer
-  - `set()` – convert to set
-- **String formatting**
-  - `f"{variable}"` – formatted string
-- **String methods**
-  - `.isdigit()` – checks if string is numeric
-  - `.split()` – splits string into a list
-- **List methods**
-  - `.append(element)` – adds an element
-- **Set methods**
-  - `.add(element)` – adds an element
-  - `.remove(element)` – removes an element
-
- 

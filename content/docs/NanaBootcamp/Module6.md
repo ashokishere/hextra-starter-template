@@ -170,11 +170,12 @@ curl -u user:pwd -X GET 'http://{host}:8081/service/rest/v1/components?repositor
 
 ```sh
 curl -u user:pwd -X GET 'http://{host}:8081/service/rest/v1/components/<ID>'
+
 ```
  
 
 
-**Multi-Tenancy Support**
+** Multi-Tenancy Support **
 
 Nexus supports multi-tenancy, allowing you to create multiple repositories for different teams or projects.
 

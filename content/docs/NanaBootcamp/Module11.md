@@ -7,6 +7,83 @@ sidebar:
   open: true
 ---
 
+# Kubernetes on AWS (Amazon EKS)
+
+---
+
+### 1\. Overview of AWS Container Services
+
+AWS provides three primary container management and registry services:
+
+* **Amazon Elastic Container Registry (ECR)**: A fully managed private Docker container registry used to securely store, manage, version, and deploy container images. It integrates natively with AWS container deployment services.
+* **Amazon Elastic Container Service (ECS)**: AWS’s proprietary container orchestration tool. While the ECS Control Plane is free, it relies on proprietary AWS APIs, making cross-cloud migration complex.
+* **Amazon Elastic Kubernetes Service (EKS)**: Amazon’s managed Kubernetes platform. It provides native Kubernetes APIs, allowing full portability, access to open-source Kubernetes tooling (such as Helm charts), and seamless migration across cloud environments.
+
+---
+
+### 2\. Amazon EKS Architecture &amp; How It Works
+
+* **Managed Control Plane**: AWS automatically deploys, configures, and manages the Kubernetes Control Plane nodes (API Server, Scheduler, Controller Manager, and `etcd`).
+* **High Availability**: The Control Plane is automatically replicated across multiple Availability Zones (AZs) within an AWS Region to eliminate single points of failure.
+* **Control Plane-Worker Communication**: Unlike ECS (which uses a custom ECS Agent), EKS communicates with compute worker nodes through standard open-source Kubernetes processes (**Container Runtime**, **Kubelet**, and **Kube-proxy**).
+
+---
+
+### 3\. Worker Node Hosting Options
+
+When deploying an EKS cluster, worker nodes can be hosted using three compute models:
+
+1. **Self-Managed EC2 Instances**: You manually provision, configure, and maintain the underlying EC2 virtual machine infrastructure.
+2. **EKS Managed Node Groups (Semi-Managed)**: AWS handles the automated provisioning, scaling, and lifecycle management (creation/deletion) of EC2 worker nodes. All required Kubernetes worker processes are pre-installed automatically.
+3. **AWS Fargate (Fully-Managed / Serverless)**: A serverless execution engine that launches Pods on demand without requiring virtual machine or EC2 node management. Billing is strictly based on the exact compute resources used by running Pods.
+
+---
+
+### 4\. Step-by-Step EKS Cluster Provisioning Workflow
+
+Provisioning an EKS cluster with a Managed Node Group involves the following key steps:
+
+1. **Create EKS IAM Role**: Define an IAM role with policies that grant AWS EKS permission to create and configure networking components on your behalf.
+2. **Provision a Custom VPC**: Create a Virtual Private Cloud (VPC) configured with both public and private subnets, alongside firewall rules for Control Plane-to-Worker communication.
+3. **Provision the EKS Control Plane**: Launch the managed Control Plane nodes in AWS.
+4. **Connect** **kubectl** **Locally**: Configure your local `kubeconfig` file with EKS cluster endpoint and authentication details to interact with the cluster API.
+5. **Create EC2 IAM Role for Node Group**: Assign an IAM role with required policies to the worker nodes so `Kubelet` can manage Pods and interact with other AWS services.
+6. **Create and Attach Managed Node Group**: Provision EC2 instances and attach them as Worker Nodes to the EKS Control Plane.
+7. **Configure Cluster Auto-Scaling**: Deploy the `cluster-autoscaler` Pod component into the cluster and attach auto-scaling IAM policies to the Node Group Role to dynamically scale EC2 worker nodes based on workload demand.
+8. **Deploy Workloads**: Apply Kubernetes YAML manifests to deploy containerized application Services and Deployments.
+
+---
+
+### 5\. Cluster Provisioning Methods
+
+* **AWS Management Console (Manual)**: Involves step-by-step manual configuration, making replication across environments complex and error-prone.
+* **eksctl** **CLI Tool**: An official command-line utility that automates cluster, VPC, and IAM role creation using simple single-line CLI commands.
+* **Infrastructure as Code (Terraform)**: The recommended industry standard for automated, declarative, and version-controlled provisioning of EKS clusters, VPCs, and IAM roles using modular code.
+
+---
+
+### 6\. Continuous Deployment (CD) Pipeline with Jenkins, ECR, and EKS
+
+Automating application deployments to EKS from a Jenkins CI/CD pipeline requires the following architecture:
+
+* **Jenkins Server Dependencies**: Install `kubectl` CLI and `aws-iam-authenticator` inside the Jenkins environment, generate a `kubeconfig` file, and store AWS IAM credentials in Jenkins.
+* **Image Delivery via ECR**:
+  1. Authenticate Docker against the private AWS ECR registry (`aws ecr get-login-password`).
+  2. Build and tag the Docker image with dynamic versioning.
+  3. Push the image to the private ECR repository.
+  4. Create a Kubernetes `docker-registry` Secret in EKS to authenticate image pulls.
+  5. Update and apply Kubernetes manifests via the Jenkinsfile to trigger rolling updates on EKS.
+
+---
+
+### 7\. Production &amp; Security Best Practices
+
+* **Network Isolation**: Best practices dictate placing EC2 Worker Nodes inside **Private Subnets**, using **Public Subnets** strictly for public-facing Elastic Load Balancers.
+* **Secrets Encryption**: Enable envelope encryption for Kubernetes Secrets at rest using **AWS Key Management Service (KMS)** keys.
+* **Least Privilege Access**: Apply the rule of least privilege by creating narrow IAM roles and Kubernetes Role-Based Access Control (RBAC) permissions specifically assigned to services, node groups, and CI/CD users.
+* **Dynamic Auto-Scaling**: Combine Kubernetes Horizontal Pod Autoscaler (HPA) with the EKS Cluster Autoscaler to handle traffic spikes smoothly
+
+
 
 ## ECS (Elastic Container Service)
 
@@ -45,3 +122,4 @@ Fargate is an excellent choice for scenarios where managing EC2 instances is imp
 ---
 
 In summary, AWS offers a range of container management options from ECS to Kubernetes-based EKS and serverless Fargate, catering to different use cases and preferences for managing containerized applications on AWS infrastructure.
+
